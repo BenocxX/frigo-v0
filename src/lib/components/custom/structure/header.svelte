@@ -4,13 +4,14 @@
   import { enhance } from '$app/forms';
   import LogOut from 'lucide-svelte/icons/log-out';
   import { cn } from '$lib/utils';
+  import ThemeToggle from '../ui/theme-toggle.svelte';
 
   function isActiveRoute(path: string) {
     return $page.url.pathname === path;
   }
 </script>
 
-<nav class="bg-white shadow">
+<nav class="bg-background shadow">
   <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
     <div class="relative flex h-16 justify-between">
       <div class="flex flex-1 items-stretch justify-start px-8">
@@ -28,9 +29,10 @@
       <div
         class="absolute inset-y-0 right-0 flex items-center gap-2 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
       >
+        <ThemeToggle />
         {#if $page.data.user}
           <form method="post" action="/dashboard?/logout" use:enhance>
-            <Button type="submit" variant="ghost" size="icon">
+            <Button type="submit" variant="outline" size="icon">
               <LogOut />
             </Button>
           </form>
@@ -46,10 +48,10 @@
   <a
     {href}
     class={cn(
-      'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
+      'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-colors',
       isActiveRoute(href)
-        ? 'border-b-2 border-indigo-500 text-gray-900'
-        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+        ? 'border-b-2 border-primary text-foreground'
+        : 'border-transparent text-muted-foreground hover:border-foreground/25 hover:text-foreground/90'
     )}
   >
     {label}
