@@ -1,37 +1,27 @@
-<script>
+<script lang="ts">
   import { Button, buttonVariants } from '$lib/components/ui/button';
   import { page } from '$app/stores';
   import { enhance } from '$app/forms';
+  import LogOut from 'lucide-svelte/icons/log-out';
+  import { cn } from '$lib/utils';
+
+  function isActiveRoute(path: string) {
+    return $page.url.pathname === path;
+  }
 </script>
 
 <nav class="bg-white shadow">
   <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
     <div class="relative flex h-16 justify-between">
-      <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+      <div class="flex flex-1 items-stretch justify-start px-8">
         <div class="flex shrink-0 items-center text-xl font-bold">Frigo</div>
-        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+        <div class="ml-8 flex space-x-6">
           {#if $page.data.user?.role === 'user'}
-            <a
-              href="/dashboard/buy"
-              class="inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
-              >Acheter</a
-            >
-            <a
-              href="/dashboard/transactions"
-              class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-              >Transactions</a
-            >
+            {@render link('/dashboard/buy', 'Acheter')}
+            {@render link('/dashboard/transactions', 'Transactions')}
           {:else if $page.data.user?.role === 'admin'}
-            <a
-              href="/dashboard/products"
-              class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-              >Produits</a
-            >
-            <a
-              href="/dashboard/transactions"
-              class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-              >Transactions</a
-            >
+            {@render link('/dashboard/products', 'Produits')}
+            {@render link('/dashboard/transactions', 'Transactions')}
           {/if}
         </div>
       </div>
@@ -40,12 +30,28 @@
       >
         {#if $page.data.user}
           <form method="post" action="/dashboard?/logout" use:enhance>
-            <Button type="submit">Logout</Button>
+            <Button type="submit" variant="ghost" size="icon">
+              <LogOut />
+            </Button>
           </form>
         {:else}
-          <a href="/login" class={buttonVariants()}>Authentification</a>
+          <a href="/login" class={buttonVariants()}>Connexion</a>
         {/if}
       </div>
     </div>
   </div>
 </nav>
+
+{#snippet link(href: string, label: string)}
+  <a
+    {href}
+    class={cn(
+      'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
+      isActiveRoute(href)
+        ? 'border-b-2 border-indigo-500 text-gray-900'
+        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+    )}
+  >
+    {label}
+  </a>
+{/snippet}
