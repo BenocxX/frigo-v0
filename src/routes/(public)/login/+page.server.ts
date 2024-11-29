@@ -8,11 +8,7 @@ import { loginSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { db } from '$lib/server/prisma';
 
-export const load: PageServerLoad = async (event) => {
-  if (event.locals.user) {
-    return redirect(302, '/dashboard');
-  }
-
+export const load: PageServerLoad = async () => {
   return {
     form: await superValidate(zod(loginSchema)),
   };

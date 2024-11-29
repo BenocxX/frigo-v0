@@ -1,19 +1,10 @@
-import { redirect } from '@sveltejs/kit';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { addProductSchema } from './schema.js';
 import { db } from '$lib/server/prisma.js';
 import { z } from 'zod';
 
-export const load = async (event) => {
-  if (!event.locals.user) {
-    return redirect(302, '/login');
-  }
-
-  if (event.locals.user.role !== 'admin') {
-    return redirect(302, '/dashboard');
-  }
-
+export const load = async () => {
   const products = await db.product.findMany();
 
   return {
