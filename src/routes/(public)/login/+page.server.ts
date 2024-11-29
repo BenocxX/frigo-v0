@@ -1,14 +1,12 @@
 import { verify } from '@node-rs/argon2';
 import { fail, redirect } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
 import * as auth from '$lib/server/auth';
-import { db } from '$lib/server/db';
-import * as table from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
 
 import { setError, superValidate } from 'sveltekit-superforms';
 import { loginSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
+import { db } from '$lib/server/prisma';
 
 export const load: PageServerLoad = async (event) => {
   if (event.locals.user) {
@@ -30,9 +28,14 @@ export const actions: Actions = {
 
     const { username, password } = form.data;
 
-    const results = await db.select().from(table.user).where(eq(table.user.username, username));
+    const existingUser = await db.user.findFirst({
+      where: {
+        username: {
+          equals: username,
+        },
+      },
+    });
 
-    const existingUser = results.at(0);
     if (!existingUser) {
       return setError(form, 'username', "Nom d'utilisateur ou mot de passe incorrect");
     }

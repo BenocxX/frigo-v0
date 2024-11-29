@@ -9,11 +9,7 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "prettier --write .",
-    "lint": "prettier --check . && eslint .",
-    "db:start": "docker compose up",
-    "db:push": "drizzle-kit push",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "lint": "prettier --check . && eslint ."
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
@@ -21,7 +17,6 @@
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
-    "drizzle-kit": "^0.22.0",
     "eslint": "^9.7.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.36.0",
@@ -46,9 +41,9 @@
     "@node-rs/argon2": "^1.1.0",
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
+    "@prisma/client": "6.0.0",
     "@types/node": "^22.10.1",
     "bits-ui": "^1.0.0-next.64",
-    "drizzle-orm": "^0.33.0",
-    "postgres": "^3.4.4"
+    "prisma": "^6.0.0"
   }
 }

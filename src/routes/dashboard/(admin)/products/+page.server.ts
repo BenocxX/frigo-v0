@@ -1,0 +1,50 @@
+import { redirect } from '@sveltejs/kit';
+import { fail, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { addProductSchema } from './schema.js';
+import { db } from '$lib/server/prisma.js';
+import { z } from 'zod';
+
+export const load = async (event) => {
+  if (!event.locals.user) {
+    return redirect(302, '/login');
+  }
+
+  if (event.locals.user.role !== 'admin') {
+    return redirect(302, '/dashboard');
+  }
+
+  const products = await db.product.findMany();
+
+  return {
+    form: await superValidate(zod(addProductSchema)),
+    products,
+  };
+};
+
+export const actions = {
+  create: async (event) => {
+    const form = await superValidate(event, zod(addProductSchema));
+
+    if (!form.valid) {
+      return fail(400, { form });
+    }
+
+    await db.product.create({
+      data: form.data,
+    });
+
+    return { form };
+  },
+  delete: async (event) => {
+    const formData = await event.request.formData();
+    const productId = formData.get('productId');
+
+    const result = z.coerce.number().safeParse(productId);
+    if (!result.success) {
+      return fail(400, { message: 'Invalid Product ID' });
+    }
+
+    await db.product.delete({ where: { id: result.data } });
+  },
+};
