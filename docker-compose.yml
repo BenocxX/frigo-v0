@@ -1,10 +1,10 @@
 services:
-  db:
+  frigo-db:
     image: postgres
     restart: always
     ports:
       - 5432:5432
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
       POSTGRES_DB: local
