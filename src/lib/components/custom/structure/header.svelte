@@ -21,8 +21,8 @@
             {@render link('/dashboard/buy', 'Acheter')}
             {@render link('/dashboard/transactions', 'Transactions')}
           {:else if $page.data.user?.role === 'admin'}
-            {@render link('/dashboard/products', 'Produits')}
-            {@render link('/dashboard/transactions', 'Transactions')}
+            {@render link('/dashboard/admin/products', 'Produits')}
+            {@render link('/dashboard/admin/transactions', 'Transactions')}
           {/if}
         </div>
       </div>
