@@ -1,20 +1,19 @@
 import { verify } from '@node-rs/argon2';
 import { fail, redirect } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
-import type { Actions, PageServerLoad } from './$types';
 
 import { setError, superValidate } from 'sveltekit-superforms';
 import { loginSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { db } from '$lib/server/prisma';
 
-export const load: PageServerLoad = async () => {
+export const load = async () => {
   return {
     form: await superValidate(zod(loginSchema)),
   };
 };
 
-export const actions: Actions = {
+export const actions = {
   default: async (event) => {
     const form = await superValidate(event, zod(loginSchema));
 

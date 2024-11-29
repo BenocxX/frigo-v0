@@ -3,6 +3,7 @@
   import { page } from '$app/stores';
   import { enhance } from '$app/forms';
   import LogOut from 'lucide-svelte/icons/log-out';
+  import Settings from 'lucide-svelte/icons/settings';
   import { cn } from '$lib/utils';
   import ThemeToggle from '../ui/theme-toggle.svelte';
 
@@ -31,6 +32,12 @@
       >
         <ThemeToggle />
         {#if $page.data.user}
+          <a
+            href="/dashboard/settings"
+            class={buttonVariants({ variant: 'outline', size: 'icon' })}
+          >
+            <Settings />
+          </a>
           <form method="post" action="/dashboard?/logout" use:enhance>
             <Button type="submit" variant="outline" size="icon">
               <LogOut />
