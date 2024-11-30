@@ -3,6 +3,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { resetPasswordSchema } from './schema.js';
 import { AuthService } from '$lib/server/services/auth-service.js';
 import { db } from '$lib/server/prisma.js';
+import { z } from 'zod';
 
 export const load = async ({ locals }) => {
   const passkeys = await db.passkey.findMany({
@@ -20,9 +21,13 @@ export const load = async ({ locals }) => {
 export const actions = {
   deletePasskey: async (event) => {
     const formData = await event.request.formData();
-    const passkeyId = formData.get('passkeyId');
+    const result = z.string().safeParse(formData.get('passkeyId'));
 
-    console.log('EDELETING PASSKEY:', passkeyId);
+    if (!result.success) {
+      return fail(400, { passkeyId: 'Invalid passkeyId' });
+    }
+
+    await db.passkey.delete({ where: { id: result.data } });
   },
   resetPassword: async (event) => {
     const form = await superValidate(event, zod(resetPasswordSchema));

@@ -74,8 +74,31 @@
       <p>
         {passkey.name}
       </p>
+      <p class="mt-1 text-sm text-muted-foreground">
+        <!-- {{
+          formatDate(passkey.createdAt, 'PPP', {
+            locale: frCA,
+          })
+        }} -->
+        | Dernière utilisation il y a
+        <!-- {{
+          formatDistance(new Date(), passkey.lastUsed ?? '', {
+            locale: frCA,
+          })
+        }} -->
+      </p>
     </div>
     <div class="flex items-center gap-2">
+      <Button
+        size="icon"
+        variant="outline"
+        onclick={() => {
+          // isEditing = !isEditing;
+          // editingName = passkey.name;
+        }}
+      >
+        <Pen />
+      </Button>
       <AlertDialogConfirm>
         {#snippet trigger({ props })}
           <Button {...props} size="icon" variant="destructive">
