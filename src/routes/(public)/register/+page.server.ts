@@ -1,12 +1,12 @@
 import { hash } from '@node-rs/argon2';
 import { encodeBase32LowerCase } from '@oslojs/encoding';
 import { fail, redirect } from '@sveltejs/kit';
-import * as auth from '$lib/server/auth';
 
 import { setError, superValidate } from 'sveltekit-superforms';
 import { registerSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { db } from '$lib/server/prisma';
+import { SessionService } from '$lib/server/services/session-service';
 
 export const load = async () => {
   return {
@@ -42,9 +42,11 @@ export const actions = {
         },
       });
 
-      const sessionToken = auth.generateSessionToken();
-      const session = await auth.createSession(sessionToken, userId);
-      auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
+      const sessionService = new SessionService();
+
+      const sessionToken = sessionService.generateToken();
+      const session = await sessionService.create(sessionToken, userId);
+      sessionService.setCookie(event, sessionToken, session.expiresAt);
     } catch {
       return setError(form, 'username', "Nom d'utilisateur déjà utilisé");
     }

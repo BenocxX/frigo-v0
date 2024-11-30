@@ -1,10 +1,11 @@
-import * as auth from '$lib/server/auth';
+import { SessionService } from '$lib/server/services/session-service.js';
 import { redirect } from '@sveltejs/kit';
 
 export const actions = {
   logout: async (event) => {
-    await auth.invalidateSession(event.locals.session!.id);
-    auth.deleteSessionTokenCookie(event);
+    const sessionService = new SessionService();
+    sessionService.invalidate(event.locals.session!.id);
+    sessionService.deleteCookie(event);
 
     return redirect(302, '/login');
   },

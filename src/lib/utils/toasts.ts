@@ -22,7 +22,6 @@ export function makeToastInstance(customId?: string) {
     // See: https://github.com/wobsoriano/svelte-sonner/issues/109
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     toast.loading(message, { id, ...options, promise: true } as any);
-    console.log(id);
   };
 
   const success: ToastFunc = (message, options) => toast.success(message, { id, ...options });

@@ -1,11 +1,11 @@
 import { verify } from '@node-rs/argon2';
 import { fail, redirect } from '@sveltejs/kit';
-import * as auth from '$lib/server/auth';
 
 import { setError, superValidate } from 'sveltekit-superforms';
 import { loginSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { db } from '$lib/server/prisma';
+import { SessionService } from '$lib/server/services/session-service';
 
 export const load = async () => {
   return {
@@ -45,9 +45,11 @@ export const actions = {
       return setError(form, 'username', "Nom d'utilisateur ou mot de passe incorrect");
     }
 
-    const sessionToken = auth.generateSessionToken();
-    const session = await auth.createSession(sessionToken, existingUser.id);
-    auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
+    const sessionService = new SessionService();
+
+    const sessionToken = sessionService.generateToken();
+    const session = await sessionService.create(sessionToken, existingUser.id);
+    sessionService.setCookie(event, sessionToken, session.expiresAt);
 
     return redirect(302, '/dashboard');
   },
