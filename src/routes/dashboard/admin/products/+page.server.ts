@@ -1,14 +1,19 @@
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { addProductSchema } from './schema.js';
 import { db } from '$lib/server/prisma.js';
-import { z } from 'zod';
+import {
+  addProductSchema,
+  deleteProductSchema,
+} from '$lib/components/custom/forms/products/schema';
 
 export const load = async () => {
   const products = await db.product.findMany();
 
   return {
-    addProductForm: await superValidate(zod(addProductSchema)),
+    forms: {
+      add: await superValidate(zod(addProductSchema)),
+      delete: await superValidate(zod(deleteProductSchema)),
+    },
     products,
   };
 };
@@ -27,15 +32,13 @@ export const actions = {
 
     return { form };
   },
-  delete: async (event) => {
-    const formData = await event.request.formData();
-    const productId = formData.get('productId');
+  deleteProduct: async (event) => {
+    const form = await superValidate(event, zod(deleteProductSchema));
 
-    const result = z.coerce.number().safeParse(productId);
-    if (!result.success) {
-      return fail(400);
+    if (!form.valid) {
+      return fail(400, { form });
     }
 
-    await db.product.delete({ where: { id: result.data } });
+    await db.product.delete({ where: { id: form.data.productId } });
   },
 };

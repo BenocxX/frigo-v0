@@ -5,4 +5,9 @@ export const addProductSchema = z.object({
   price: z.coerce.number(),
 });
 
+export const deleteProductSchema = z.object({
+  productId: z.coerce.number(),
+});
+
 export type AddProductSchema = typeof addProductSchema;
+export type DeleteProductSchema = typeof deleteProductSchema;
