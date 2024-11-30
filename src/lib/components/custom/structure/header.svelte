@@ -12,7 +12,7 @@
   }
 </script>
 
-<nav class="bg-background shadow">
+<nav class="sticky top-0 bg-background shadow">
   <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
     <div class="relative flex h-16 justify-between">
       <div class="flex flex-1 items-stretch justify-start px-8">

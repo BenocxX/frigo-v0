@@ -2,19 +2,19 @@ import { fail, setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { AuthService } from '$lib/server/services/auth-service.js';
 import { db } from '$lib/server/prisma.js';
-import { z } from 'zod';
-import { renamePasskeySchema, resetPasswordSchema } from '$lib/schemas/passkey';
+import {
+  deletePasskeySchema,
+  renamePasskeySchema,
+  resetPasswordSchema,
+} from '$lib/components/custom/forms/passkeys/schema';
 
 export const load = async ({ locals }) => {
-  const passkeys = await db.passkey.findMany({
-    where: {
-      userId: locals.user!.id,
-    },
-  });
+  const passkeys = await db.passkey.findMany({ where: { userId: locals.user!.id } });
 
   return {
-    resetPasswordForm: await superValidate(zod(resetPasswordSchema)),
+    deletePasskeyForm: await superValidate(zod(deletePasskeySchema)),
     renamePasskeyForm: await superValidate(zod(renamePasskeySchema)),
+    resetPasswordForm: await superValidate(zod(resetPasswordSchema)),
     passkeys,
   };
 };
@@ -33,14 +33,13 @@ export const actions = {
     });
   },
   deletePasskey: async (event) => {
-    const formData = await event.request.formData();
-    const result = z.string().safeParse(formData.get('passkeyId'));
+    const form = await superValidate(event, zod(deletePasskeySchema));
 
-    if (!result.success) {
-      return fail(400, { passkeyId: 'Invalid passkeyId' });
+    if (!form.valid) {
+      return fail(400, { form });
     }
 
-    await db.passkey.delete({ where: { id: result.data } });
+    await db.passkey.delete({ where: { id: form.data.passkeyId } });
   },
   resetPassword: async (event) => {
     const form = await superValidate(event, zod(resetPasswordSchema));

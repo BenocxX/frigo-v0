@@ -6,14 +6,21 @@
   import KeyRound from 'lucide-svelte/icons/key-round';
   import PasskeyListItem from './passkey-list-item.svelte';
   import type { Infer, SuperValidated } from 'sveltekit-superforms';
-  import type { RenamePasskeySchema } from '$lib/schemas/passkey';
+  import type {
+    DeletePasskeySchema,
+    RenamePasskeySchema,
+  } from '$lib/components/custom/forms/passkeys/schema';
+  import { Separator } from '$lib/components/ui/separator';
 
   type Props = {
     passkeys: Passkey[];
-    renamePasskeyForm: SuperValidated<Infer<RenamePasskeySchema>>;
+    forms: {
+      delete: SuperValidated<Infer<DeletePasskeySchema>>;
+      rename: SuperValidated<Infer<RenamePasskeySchema>>;
+    };
   };
 
-  const { passkeys, renamePasskeyForm }: Props = $props();
+  const { passkeys, forms }: Props = $props();
 
   let error = $state('');
 
@@ -56,15 +63,18 @@
   </div>
   <div class="flex flex-col gap-4 md:col-span-2">
     {#if passkeys.length > 0}
-      <ul>
-        {#each passkeys as passkey}
-          <PasskeyListItem {renamePasskeyForm} {passkey} />
+      <ul class="space-y-4">
+        {#each passkeys as passkey, index}
+          <PasskeyListItem {forms} {passkey} />
+          {#if index < passkeys.length - 1}
+            <Separator />
+          {/if}
         {/each}
       </ul>
     {:else}
       <p class="text-center text-muted-foreground">Aucune passkey n'a été trouvée.</p>
     {/if}
-    <Button variant="outline" size="lg" onclick={onNewPasskey}>
+    <Button variant="outline" size="lg" class="mt-2" onclick={onNewPasskey}>
       Ajouter une passkey
       <KeyRound class="size-4" />
     </Button>
