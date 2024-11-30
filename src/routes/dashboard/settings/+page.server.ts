@@ -1,9 +1,9 @@
 import { fail, setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { resetPasswordSchema } from './schema.js';
 import { AuthService } from '$lib/server/services/auth-service.js';
 import { db } from '$lib/server/prisma.js';
 import { z } from 'zod';
+import { renamePasskeySchema, resetPasswordSchema } from '$lib/schemas/passkey';
 
 export const load = async ({ locals }) => {
   const passkeys = await db.passkey.findMany({
@@ -14,11 +14,24 @@ export const load = async ({ locals }) => {
 
   return {
     resetPasswordForm: await superValidate(zod(resetPasswordSchema)),
+    renamePasskeyForm: await superValidate(zod(renamePasskeySchema)),
     passkeys,
   };
 };
 
 export const actions = {
+  renamePasskey: async (event) => {
+    const form = await superValidate(event, zod(renamePasskeySchema));
+
+    if (!form.valid) {
+      return fail(400, { form });
+    }
+
+    await db.passkey.update({
+      where: { id: form.data.passkeyId },
+      data: { name: form.data.name },
+    });
+  },
   deletePasskey: async (event) => {
     const formData = await event.request.formData();
     const result = z.string().safeParse(formData.get('passkeyId'));

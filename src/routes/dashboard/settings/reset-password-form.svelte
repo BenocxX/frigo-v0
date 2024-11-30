@@ -2,10 +2,10 @@
   import FormErrors from '$lib/components/custom/ui/form/form-errors.svelte';
   import * as Form from '$lib/components/ui/form/index.js';
   import { Input } from '$lib/components/ui/input';
-  import { resetPasswordSchema, type ResetPasswordSchema } from './schema';
   import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
   import { makeToastInstance } from '$lib/utils/toasts';
+  import { resetPasswordSchema, type ResetPasswordSchema } from '$lib/schemas/passkey';
 
   type Props = {
     class?: string;

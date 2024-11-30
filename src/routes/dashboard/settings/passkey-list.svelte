@@ -3,13 +3,17 @@
   import { Button } from '$lib/components/ui/button';
   import type { Passkey } from '@prisma/client';
   import { startRegistration } from '@simplewebauthn/browser';
-  import Pen from 'lucide-svelte/icons/pen';
-  import Trash from 'lucide-svelte/icons/trash';
   import KeyRound from 'lucide-svelte/icons/key-round';
-  import AlertDialogConfirm from '$lib/components/custom/ui/dialogs/alert-dialog-confirm.svelte';
-  import { enhance } from '$app/forms';
+  import PasskeyListItem from './passkey-list-item.svelte';
+  import type { Infer, SuperValidated } from 'sveltekit-superforms';
+  import type { RenamePasskeySchema } from '$lib/schemas/passkey';
 
-  const { passkeys }: { passkeys: Passkey[] } = $props();
+  type Props = {
+    passkeys: Passkey[];
+    renamePasskeyForm: SuperValidated<Infer<RenamePasskeySchema>>;
+  };
+
+  const { passkeys, renamePasskeyForm }: Props = $props();
 
   let error = $state('');
 
@@ -54,7 +58,7 @@
     {#if passkeys.length > 0}
       <ul>
         {#each passkeys as passkey}
-          {@render passkeyListItem(passkey)}
+          <PasskeyListItem {renamePasskeyForm} {passkey} />
         {/each}
       </ul>
     {:else}
@@ -67,61 +71,3 @@
     <p class="text-sm text-destructive">{error}</p>
   </div>
 </div>
-
-{#snippet passkeyListItem(passkey: Passkey)}
-  <li class="flex items-center justify-between">
-    <div>
-      <p>
-        {passkey.name}
-      </p>
-      <p class="mt-1 text-sm text-muted-foreground">
-        <!-- {{
-          formatDate(passkey.createdAt, 'PPP', {
-            locale: frCA,
-          })
-        }} -->
-        | Dernière utilisation il y a
-        <!-- {{
-          formatDistance(new Date(), passkey.lastUsed ?? '', {
-            locale: frCA,
-          })
-        }} -->
-      </p>
-    </div>
-    <div class="flex items-center gap-2">
-      <Button
-        size="icon"
-        variant="outline"
-        onclick={() => {
-          // isEditing = !isEditing;
-          // editingName = passkey.name;
-        }}
-      >
-        <Pen />
-      </Button>
-      <AlertDialogConfirm>
-        {#snippet trigger({ props })}
-          <Button {...props} size="icon" variant="destructive">
-            <Trash />
-          </Button>
-        {/snippet}
-        {#snippet title()}
-          Êtes-vous sûr de vouloir supprimer cette passkey ?
-        {/snippet}
-        {#snippet description()}
-          Supprimer cette passkey la rendra inutilisable, vous devrez utiliser un autre moyen pour
-          vous connecter ou en générer une nouvelle. Cette action est irréversible.
-        {/snippet}
-        {#snippet action({ props })}
-          <form method="POST" action="?/deletePasskey" use:enhance>
-            <input type="hidden" name="passkeyId" value={passkey.id} />
-            <Button {...props} type="submit" variant="destructive">
-              Supprimer la passkey
-              <Trash />
-            </Button>
-          </form>
-        {/snippet}
-      </AlertDialogConfirm>
-    </div>
-  </li>
-{/snippet}
