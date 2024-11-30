@@ -5,10 +5,7 @@
   import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
   import { makeToastInstance } from '$lib/utils/toasts';
-  import {
-    resetPasswordSchema,
-    type ResetPasswordSchema,
-  } from '$lib/components/custom/forms/passkeys/schema';
+  import { resetPasswordSchema, type ResetPasswordSchema } from './schema';
 
   type Props = {
     class?: string;

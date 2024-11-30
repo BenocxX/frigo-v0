@@ -1,6 +1,6 @@
 <script lang="ts">
+  import ResetPasswordForm from '$lib/components/custom/forms/auth/reset-password-form.svelte';
   import PasskeyList from './passkey-list.svelte';
-  import ResetPasswordForm from './reset-password-form.svelte';
 
   let { data } = $props();
 </script>

@@ -5,8 +5,8 @@ import { db } from '$lib/server/prisma.js';
 import {
   deletePasskeySchema,
   renamePasskeySchema,
-  resetPasswordSchema,
 } from '$lib/components/custom/forms/passkeys/schema';
+import { resetPasswordSchema } from '$lib/components/custom/forms/auth/schema';
 
 export const load = async ({ locals }) => {
   const passkeys = await db.passkey.findMany({ where: { userId: locals.user!.id } });
