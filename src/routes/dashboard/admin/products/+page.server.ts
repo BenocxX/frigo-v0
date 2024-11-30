@@ -8,7 +8,7 @@ export const load = async () => {
   const products = await db.product.findMany();
 
   return {
-    form: await superValidate(zod(addProductSchema)),
+    addProductForm: await superValidate(zod(addProductSchema)),
     products,
   };
 };
@@ -33,7 +33,7 @@ export const actions = {
 
     const result = z.coerce.number().safeParse(productId);
     if (!result.success) {
-      return fail(400, { message: 'Invalid Product ID' });
+      return fail(400);
     }
 
     await db.product.delete({ where: { id: result.data } });

@@ -5,6 +5,7 @@
   import { resetPasswordSchema, type ResetPasswordSchema } from './schema';
   import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
+  import { makeToastInstance } from '$lib/utils/toasts';
 
   type Props = {
     class?: string;
@@ -13,8 +14,18 @@
 
   const { class: className, data }: Props = $props();
 
+  const toastInstance = makeToastInstance();
+
   const form = superForm(data, {
     validators: zodClient(resetPasswordSchema),
+    onSubmit: () => toastInstance.loading('Modification en cours...'),
+    onResult: ({ result }) => {
+      if (toastInstance.isFailure(result)) {
+        toastInstance.error('Erreur lors de la modification.');
+      } else {
+        toastInstance.success('Mot de passe modifié avec succès.');
+      }
+    },
   });
 
   const { form: formData, enhance } = form;

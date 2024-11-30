@@ -1,12 +1,14 @@
 <script lang="ts">
+  import '../app.css';
   import Footer from '$lib/components/custom/structure/footer.svelte';
   import Header from '$lib/components/custom/structure/header.svelte';
   import { ModeWatcher } from 'mode-watcher';
-  import '../app.css';
+  import { Toaster } from '$lib/components/ui/sonner';
 
   let { children } = $props();
 </script>
 
+<Toaster position="top-right" richColors />
 <ModeWatcher />
 <div class="flex h-screen flex-col">
   <Header />
