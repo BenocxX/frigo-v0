@@ -1,4 +1,5 @@
 <script lang="ts">
+  import PasskeyList from './passkey-list.svelte';
   import ResetPasswordForm from './reset-password-form.svelte';
 
   let { data } = $props();
@@ -6,17 +7,7 @@
 
 <div>
   <h1 class="mb-8 text-4xl">Paramètres</h1>
-  <!-- <PasskeyList /> -->
-  <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b pb-12 md:grid-cols-3">
-    <div>
-      <h2 class="font-semibold">Passkeys</h2>
-      <p class="mt-1 text-sm/6 text-muted-foreground">
-        Les passkeys sont des clés de sécurité qui vous permettent de vous connecter à votre compte
-        sans avoir à saisir votre mot de passe.
-      </p>
-    </div>
-    <div class="flex flex-col gap-4 md:col-span-2">Passkeys list</div>
-  </div>
+  <PasskeyList passkeys={data.passkeys} />
   <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b pb-12 pt-12 md:grid-cols-3">
     <div>
       <h2 class="font-semibold">Mot de passe</h2>

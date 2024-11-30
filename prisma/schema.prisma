@@ -14,12 +14,15 @@ datasource db {
 }
 
 model User {
-  id           String        @id
-  username     String        @unique
+  id           String @id
+  username     String @unique
   passwordHash String
-  role         String        @default("user")
-  sessions     Session[]
-  Transaction  Transaction[]
+  role         String @default("user")
+
+  sessions                 Session[]
+  Passkey                  Passkey[]
+  PasskeyCredentialOptions PasskeyCredentialOptions?
+  Transaction              Transaction[]
 }
 
 model Session {
@@ -27,6 +30,36 @@ model Session {
   userId    String
   expiresAt DateTime
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Passkey {
+  id             String   @id @unique
+  userId         String
+  publicKey      Bytes
+  webauthnUserID String   @unique
+  counter        BigInt
+  deviceType     String
+  backedUp       Boolean
+  transports     String[]
+
+  name      String
+  lastUsed  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([id], name: "passkey_id_index")
+  @@index([userId], name: "passkey_user_id_index")
+  @@index([webauthnUserID], name: "passkey_webauthn_user_id_index")
+}
+
+model PasskeyCredentialOptions {
+  id          Int    @id @default(autoincrement())
+  userId      String @unique
+  optionsJson String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {

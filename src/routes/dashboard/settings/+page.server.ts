@@ -2,10 +2,18 @@ import { fail, setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { resetPasswordSchema } from './schema.js';
 import { AuthService } from '$lib/server/services/auth-service.js';
+import { db } from '$lib/server/prisma.js';
 
-export const load = async () => {
+export const load = async ({ locals }) => {
+  const passkeys = await db.passkey.findMany({
+    where: {
+      userId: locals.user!.id,
+    },
+  });
+
   return {
     resetPasswordForm: await superValidate(zod(resetPasswordSchema)),
+    passkeys,
   };
 };
 
