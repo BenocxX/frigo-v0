@@ -47,7 +47,7 @@
     "@simplewebauthn/server": "^12.0.0",
     "@simplewebauthn/types": "^12.0.0",
     "@types/node": "^22.10.1",
-    "bits-ui": "^1.0.0-next.64",
+    "bits-ui": "^1.0.0-next.65",
     "lucide-svelte": "^0.462.0",
     "mode-watcher": "^0.5.0",
     "oslo": "^1.2.1",

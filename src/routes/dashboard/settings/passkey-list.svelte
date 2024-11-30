@@ -3,7 +3,11 @@
   import { Button } from '$lib/components/ui/button';
   import type { Passkey } from '@prisma/client';
   import { startRegistration } from '@simplewebauthn/browser';
+  import Pen from 'lucide-svelte/icons/pen';
+  import Trash from 'lucide-svelte/icons/trash';
   import KeyRound from 'lucide-svelte/icons/key-round';
+  import AlertDialogConfirm from '$lib/components/custom/ui/dialogs/alert-dialog-confirm.svelte';
+  import { enhance } from '$app/forms';
 
   const { passkeys }: { passkeys: Passkey[] } = $props();
 
@@ -50,7 +54,7 @@
     {#if passkeys.length > 0}
       <ul>
         {#each passkeys as passkey}
-          <li>{passkey.name}</li>
+          {@render passkeyListItem(passkey)}
         {/each}
       </ul>
     {:else}
@@ -63,3 +67,38 @@
     <p class="text-sm text-destructive">{error}</p>
   </div>
 </div>
+
+{#snippet passkeyListItem(passkey: Passkey)}
+  <li class="flex items-center justify-between">
+    <div>
+      <p>
+        {passkey.name}
+      </p>
+    </div>
+    <div class="flex items-center gap-2">
+      <AlertDialogConfirm>
+        {#snippet trigger({ props })}
+          <Button {...props} size="icon" variant="destructive">
+            <Trash />
+          </Button>
+        {/snippet}
+        {#snippet title()}
+          Êtes-vous sûr de vouloir supprimer cette passkey ?
+        {/snippet}
+        {#snippet description()}
+          Supprimer cette passkey la rendra inutilisable, vous devrez utiliser un autre moyen pour
+          vous connecter ou en générer une nouvelle. Cette action est irréversible.
+        {/snippet}
+        {#snippet action({ props })}
+          <form method="POST" action="?/deletePasskey" use:enhance>
+            <input type="hidden" name="passkeyId" value={passkey.id} />
+            <Button {...props} type="submit" variant="destructive">
+              Supprimer la passkey
+              <Trash />
+            </Button>
+          </form>
+        {/snippet}
+      </AlertDialogConfirm>
+    </div>
+  </li>
+{/snippet}

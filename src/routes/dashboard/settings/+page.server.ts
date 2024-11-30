@@ -18,6 +18,12 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
+  deletePasskey: async (event) => {
+    const formData = await event.request.formData();
+    const passkeyId = formData.get('passkeyId');
+
+    console.log('EDELETING PASSKEY:', passkeyId);
+  },
   resetPassword: async (event) => {
     const form = await superValidate(event, zod(resetPasswordSchema));
 
