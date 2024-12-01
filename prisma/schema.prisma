@@ -29,7 +29,7 @@ model Session {
   id        String   @id
   userId    String
   expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Passkey {
@@ -63,18 +63,28 @@ model PasskeyCredentialOptions {
 }
 
 model Product {
-  id          Int           @id @default(autoincrement())
-  name        String
-  price       Float
-  Transaction Transaction[]
+  id    Int    @id @default(autoincrement())
+  name  String
+  price Float
+
+  TransactionProduct TransactionProduct[]
 }
 
 model Transaction {
   id        Int      @id @default(autoincrement())
   userId    String
-  productId Int
-  quantity  Int
-  createdAt DateTime
-  user      User     @relation(fields: [userId], references: [id])
-  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+
+  transactionProducts TransactionProduct[]
+  User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TransactionProduct {
+  id            Int @id @default(autoincrement())
+  productId     Int
+  transactionId Int
+  quantity      Int
+
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  Transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 }

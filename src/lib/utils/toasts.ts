@@ -39,3 +39,17 @@ export function makeToastInstance(customId?: string) {
     isFailure,
   };
 }
+
+export function makeFormResultToast(
+  result: ActionResult,
+  options: {
+    success: string;
+    error: string;
+  }
+) {
+  if (result.type === 'error' || result.type === 'failure') {
+    return toast.error(options.error);
+  }
+
+  return toast.success(options.success);
+}
