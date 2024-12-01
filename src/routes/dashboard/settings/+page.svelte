@@ -14,7 +14,7 @@
     }}
     passkeys={data.passkeys}
   />
-  <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b pb-12 pt-12 md:grid-cols-3">
+  <div class="grid grid-cols-1 gap-x-8 gap-y-10 pb-12 pt-12 md:grid-cols-3">
     <div>
       <h2 class="font-semibold">Mot de passe</h2>
       <p class="mt-1 text-sm/6 text-muted-foreground">
@@ -23,7 +23,7 @@
     </div>
     <ResetPasswordForm class="flex flex-col gap-4 md:col-span-2" data={data.resetPasswordForm} />
   </div>
-  <div class="grid grid-cols-1 gap-x-8 gap-y-10 pb-12 pt-12 md:grid-cols-3">
+  <!-- <div class="grid grid-cols-1 gap-x-8 gap-y-10 pb-12 pt-12 md:grid-cols-3">
     <div>
       <h2 class="font-semibold">Sessions</h2>
       <p class="mt-1 text-sm/6 text-muted-foreground">
@@ -31,5 +31,5 @@
       </p>
     </div>
     <div class="flex flex-col gap-4 md:col-span-2">Sessions actives</div>
-  </div>
+  </div> -->
 </div>
