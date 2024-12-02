@@ -5,10 +5,15 @@ import { loginSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { AuthService } from '$lib/server/services/auth-service';
 
-export const load = async () => {
-  return {
-    form: await superValidate(zod(loginSchema)),
-  };
+export const load = async ({ url }) => {
+  const form = await superValidate(zod(loginSchema), {
+    defaults: {
+      username: url.searchParams.get('username'),
+      password: '',
+    },
+  });
+
+  return { form };
 };
 
 export const actions = {

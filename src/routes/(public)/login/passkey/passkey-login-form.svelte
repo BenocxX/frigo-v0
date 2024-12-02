@@ -7,8 +7,9 @@
   import { type SuperValidated, type Infer, superForm, setError } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
   import { goto } from '$app/navigation';
+  import { makeSearchParams } from '$lib/utils/search-params.svelte';
 
-  export let data: SuperValidated<Infer<PasskeyLoginSchema>>;
+  const { data }: { data: SuperValidated<Infer<PasskeyLoginSchema>> } = $props();
 
   const form = superForm(data, {
     // Client-side only because we need to stay in the browser for the passkeys
@@ -45,6 +46,8 @@
   });
 
   const { form: formData, enhance } = form;
+
+  const { searchParams } = $derived(makeSearchParams($formData, ['username']));
 </script>
 
 <form method="POST" use:enhance>
@@ -59,7 +62,9 @@
   </Form.Field>
   <div class="mt-4 flex flex-col gap-2">
     <Form.Button>Connexion</Form.Button>
-    <a href="/login" class={buttonVariants({ variant: 'outline' })}>Utiliser un mot de passe</a>
+    <a href={`/login${searchParams}`} class={buttonVariants({ variant: 'outline' })}>
+      Utiliser un mot de passe
+    </a>
   </div>
   <p class="my-4 text-center">
     Pas de compte?

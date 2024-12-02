@@ -2,17 +2,20 @@
   import { buttonVariants } from '$lib/components/ui/button';
   import * as Form from '$lib/components/ui/form/index.js';
   import { Input } from '$lib/components/ui/input';
+  import { makeSearchParams } from '$lib/utils/search-params.svelte';
   import { loginSchema, type LoginSchema } from './schema';
   import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
 
-  export let data: SuperValidated<Infer<LoginSchema>>;
+  const { data }: { data: SuperValidated<Infer<LoginSchema>> } = $props();
 
   const form = superForm(data, {
     validators: zodClient(loginSchema),
   });
 
   const { form: formData } = form;
+
+  const { searchParams } = $derived(makeSearchParams($formData, ['username']));
 </script>
 
 <form method="POST">
@@ -36,7 +39,9 @@
   </Form.Field>
   <div class="mt-4 flex flex-col gap-2">
     <Form.Button>Connexion</Form.Button>
-    <a href="/login/passkey" class={buttonVariants({ variant: 'outline' })}>Utiliser une passkey</a>
+    <a href={`/login/passkey${searchParams}`} class={buttonVariants({ variant: 'outline' })}>
+      Utiliser une passkey
+    </a>
   </div>
   <p class="my-4 text-center">
     Pas de compte?
