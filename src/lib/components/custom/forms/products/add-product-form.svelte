@@ -39,6 +39,24 @@
     </Form.Control>
     <Form.FieldErrors />
   </Form.Field>
+  <Form.Field {form} name="description">
+    <Form.Control>
+      {#snippet children({ props })}
+        <Form.Label>Courte description du produit</Form.Label>
+        <Input {...props} bind:value={$formData.description} />
+      {/snippet}
+    </Form.Control>
+    <Form.FieldErrors />
+  </Form.Field>
+  <Form.Field {form} name="imageURL">
+    <Form.Control>
+      {#snippet children({ props })}
+        <Form.Label>URL d'une image</Form.Label>
+        <Input {...props} bind:value={$formData.imageURL} />
+      {/snippet}
+    </Form.Control>
+    <Form.FieldErrors />
+  </Form.Field>
   <Form.Field {form} name="price">
     <Form.Control>
       {#snippet children({ props })}

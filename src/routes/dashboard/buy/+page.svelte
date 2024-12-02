@@ -123,8 +123,8 @@
           </Table.Cell>
         {/snippet}
         {#snippet finalRowChild()}
-          <Table.Row class="hover:bg-transparent dark:hover:bg-transparent">
-            <Table.Cell class="font-medium">Total</Table.Cell>
+          <Table.Row class="text-muted-foreground hover:bg-transparent dark:hover:bg-transparent">
+            <Table.Cell>Total</Table.Cell>
             <Table.Cell class="text-right"></Table.Cell>
             <Table.Cell class="text-right">{formatCurrency(calculateTotal())}</Table.Cell>
             <Table.Cell>
@@ -142,23 +142,19 @@
     $formData.transactionProducts.find((tp) => tp.productId === product.id)?.quantity ?? 0}
 
   <li class="col-span-1 rounded-lg bg-card shadow">
-    <div class="flex w-full items-center justify-between space-x-6 p-6">
+    <div class="flex w-full items-center justify-between space-x-6 px-6 py-4">
+      <img class="size-14 shrink-0" src={product.imageURL} alt="" />
       <div class="flex-1 truncate">
-        <div class="flex items-center space-x-3">
-          <h3 class="truncate text-sm font-medium text-card-foreground">{product.name}</h3>
-          <!-- <span
-            class="inline-flex shrink-0 items-center rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+        <div class="flex items-center gap-2">
+          <h3 class="truncate text-xl font-medium text-card-foreground">{product.name}</h3>
+          <span
+            class="inline-flex h-max shrink-0 items-center rounded-full bg-neutral-200 px-2.5 py-1 text-xs font-medium dark:bg-neutral-700"
           >
-            Admin
-          </span> -->
+            {formatCurrency(product.price)}
+          </span>
         </div>
-        <!-- <p class="mt-1 truncate text-sm text-gray-500">Regional Paradigm Technician</p> -->
+        <p class="truncate text-sm text-muted-foreground">{product.description}</p>
       </div>
-      <!-- <img
-        class="size-10 shrink-0 rounded-full dark:bg-muted"
-        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60"
-        alt=""
-      /> -->
     </div>
     <div class="flex border-t">
       <div

@@ -18,12 +18,11 @@
       <div class="flex flex-1 items-stretch justify-start px-8">
         <div class="flex shrink-0 items-center text-xl font-bold">Frigo</div>
         <div class="ml-8 flex space-x-6">
-          {#if $page.data.user?.role === 'user'}
-            {@render link('/dashboard/buy', 'Acheter')}
-            {@render link('/dashboard/transactions', 'Transactions')}
-          {:else if $page.data.user?.role === 'admin'}
-            {@render link('/dashboard/admin/products', 'Produits')}
-            {@render link('/dashboard/admin/transactions', 'Transactions')}
+          {@render link('/dashboard/buy', 'Acheter')}
+          {@render link('/dashboard/transactions', 'Mes transactions')}
+          {#if $page.data.user?.role === 'admin'}
+            {@render link('/dashboard/admin/products', 'Liste des produits')}
+            {@render link('/dashboard/admin/transactions', 'Liste des transactions')}
           {/if}
         </div>
       </div>
