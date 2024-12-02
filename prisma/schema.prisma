@@ -73,7 +73,7 @@ model Product {
 model Transaction {
   id        Int      @id @default(autoincrement())
   userId    String
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 
   transactionProducts TransactionProduct[]
   User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)

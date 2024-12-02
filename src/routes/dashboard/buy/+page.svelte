@@ -7,6 +7,11 @@
   import type { Product } from '@prisma/client';
   import Plus from 'lucide-svelte/icons/plus';
   import Minus from 'lucide-svelte/icons/minus';
+  import Trash from 'lucide-svelte/icons/trash';
+  import * as Table from '$lib/components/ui/table/index.js';
+  import Separator from '$lib/components/ui/separator/separator.svelte';
+  import { fade } from 'svelte/transition';
+  import { Button } from '$lib/components/ui/button';
 
   const { data } = $props();
 
@@ -55,10 +60,23 @@
     const index = $formData.transactionProducts.findIndex((tp) => tp.productId === id);
     $formData.transactionProducts[index] = tp;
   }
+
+  function deleteProduct(id: number) {
+    $formData.transactionProducts = $formData.transactionProducts.filter(
+      (tp) => tp.productId !== id
+    );
+  }
+
+  function formatCurrency(value: number) {
+    return Intl.NumberFormat('fr-CA', {
+      style: 'currency',
+      currency: 'CAD',
+    }).format(value);
+  }
 </script>
 
-<form method="POST" action="?/newTransaction" use:enhance>
-  <Form.Fieldset {form} name="transactionProducts" class="mb-4 space-y-0">
+<form method="POST" action="?/newTransaction" class="flex flex-col gap-6" use:enhance>
+  <Form.Fieldset {form} name="transactionProducts" class="space-y-0">
     <div class="mb-4">
       <Form.Legend class="text-2xl">Acheter des produits</Form.Legend>
       <Form.Description>Sélectionnez les produits que vous souhaitez acheter.</Form.Description>
@@ -70,12 +88,50 @@
     </ul>
     <Form.FieldErrors />
   </Form.Fieldset>
-  <Form.Button>Acheter</Form.Button>
+  {#if $formData.transactionProducts.length > 0}
+    <div transition:fade={{ duration: 250 }} class="flex flex-col gap-4">
+      <Separator />
+      <h3 class="text-xl">Produits dans le panier</h3>
+      <Table.Root>
+        <Table.Header>
+          <Table.Row>
+            <Table.Head class="w-full whitespace-nowrap ">Nom</Table.Head>
+            <Table.Head class="text-right">Quantité</Table.Head>
+            <Table.Head class="text-right">Prix</Table.Head>
+            <Table.Head class="text-right">Supprimer</Table.Head>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {#each $formData.transactionProducts as { productId, quantity }}
+            {@const product = data.products.find((p) => p.id === productId)!}
+            <Table.Row>
+              <Table.Cell class="w-full whitespace-nowrap font-medium">{product?.name}</Table.Cell>
+              <Table.Cell class="text-right">{quantity}</Table.Cell>
+              <Table.Cell class="text-right">{formatCurrency(product.price * quantity)}</Table.Cell>
+              <Table.Cell class="flex w-max items-center gap-2">
+                <Button size="icon" variant="secondary" onclick={() => addProduct(productId)}>
+                  <Plus />
+                </Button>
+                <Button size="icon" variant="secondary" onclick={() => removeProduct(productId)}>
+                  <Minus />
+                </Button>
+                <Button size="icon" variant="secondary" onclick={() => deleteProduct(productId)}>
+                  <Trash />
+                </Button>
+              </Table.Cell>
+            </Table.Row>
+          {/each}
+        </Table.Body>
+      </Table.Root>
+      <Form.Button class="w-max">Acheter</Form.Button>
+    </div>
+  {/if}
 </form>
 
 {#snippet addProductButton(product: Product)}
   {@const quantity =
     $formData.transactionProducts.find((tp) => tp.productId === product.id)?.quantity ?? 0}
+
   <li class="col-span-1 rounded-lg bg-card shadow">
     <div class="flex w-full items-center justify-between space-x-6 p-6">
       <div class="flex-1 truncate">
@@ -97,12 +153,12 @@
     </div>
     <div class="flex border-t">
       <div
-        class="flex flex-1 rounded-bl-lg border-r transition-colors only:rounded-br-lg only:border-r-0 hover:bg-green-100 dark:hover:bg-green-950/40"
+        class="flex flex-1 rounded-bl-lg border-r text-green-600 transition-all only:rounded-br-lg only:border-r-0 hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-950/40 dark:hover:text-green-500"
       >
         <button
           type="button"
           onclick={() => addProduct(product.id)}
-          class="flex flex-1 items-center justify-center gap-2 py-4 text-green-600"
+          class="flex flex-1 items-center justify-center gap-2 py-4"
         >
           <Plus />
           Ajouter
@@ -113,12 +169,12 @@
       </div>
       {#if quantity > 0}
         <div
-          class={'flex flex-1 rounded-br-lg border-r transition-colors hover:bg-red-100 dark:hover:bg-red-950/40'}
+          class={'flex flex-1 rounded-br-lg border-r text-red-600 transition-colors hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-950/40 dark:hover:text-red-500'}
         >
           <button
             type="button"
             onclick={() => removeProduct(product.id)}
-            class="flex flex-1 items-center justify-center gap-2 py-4 text-red-600"
+            class="flex flex-1 items-center justify-center gap-2 py-4"
           >
             <Minus />
             Retirer

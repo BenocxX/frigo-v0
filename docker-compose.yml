@@ -1,6 +1,7 @@
 services:
   frigo-db:
-    image: postgres
+    build:
+      dockerfile: ./Docker/PostgreSQL/Dockerfile
     restart: always
     ports:
       - 5432:5432
