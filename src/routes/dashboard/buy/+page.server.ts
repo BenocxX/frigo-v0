@@ -32,9 +32,15 @@ export const actions = {
       return setError(form, 'transactionProducts._errors', 'La quantité doit être supérieure à 0');
     }
 
+    const total = form.data.transactionProducts.reduce(
+      (acc, p) => acc + p.quantity * products.find((pr) => pr.id === p.productId)!.price,
+      0
+    );
+
     await db.transaction.create({
       data: {
         userId: event.locals.user!.id,
+        total,
         transactionProducts: {
           create: form.data.transactionProducts,
         },
