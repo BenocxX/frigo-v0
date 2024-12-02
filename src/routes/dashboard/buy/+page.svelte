@@ -14,6 +14,7 @@
   import { Button } from '$lib/components/ui/button';
   import { formatCurrency } from '$lib/utils/format.js';
   import SimpleTable from '$lib/components/custom/ui/tables/simple-table.svelte';
+  import PageTitle from '$lib/components/custom/structure/page-title.svelte';
 
   const { data } = $props();
 
@@ -77,14 +78,12 @@
   }
 </script>
 
+<PageTitle
+  title="Acheter des produits"
+  subtitle="Sélectionnez les produits que vous souhaitez acheter"
+/>
 <form method="POST" action="?/newTransaction" class="flex flex-col gap-6" use:enhance>
   <Form.Fieldset {form} name="transactionProducts" class="space-y-0">
-    <div class="mb-8">
-      <Form.Legend class="mb-2 text-4xl">Acheter des produits</Form.Legend>
-      <Form.Description class="text-lg"
-        >Sélectionnez les produits que vous souhaitez acheter.</Form.Description
-      >
-    </div>
     <ul role="list" class="mb-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {#each data.products as product}
         {@render addProductButton(product)}
@@ -174,7 +173,7 @@
       </div>
       {#if quantity > 0}
         <div
-          class={'flex flex-1 rounded-br-lg border-r text-red-600 transition-colors hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-950/40 dark:hover:text-red-500'}
+          class={'flex flex-1 rounded-br-lg text-red-600 transition-colors hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-950/40 dark:hover:text-red-500'}
         >
           <button
             type="button"

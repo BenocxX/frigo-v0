@@ -1,12 +1,13 @@
 <script lang="ts">
   import ResetPasswordForm from '$lib/components/custom/forms/auth/reset-password-form.svelte';
+  import PageTitle from '$lib/components/custom/structure/page-title.svelte';
   import PasskeyList from './passkey-list.svelte';
 
   let { data } = $props();
 </script>
 
+<PageTitle title="Paramètres" subtitle="Gérez vos paramètres de sécurité" />
 <div>
-  <h1 class="mb-8 text-4xl">Paramètres</h1>
   <PasskeyList
     forms={{
       delete: data.deletePasskeyForm,

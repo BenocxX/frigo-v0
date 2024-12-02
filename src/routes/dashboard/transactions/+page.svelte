@@ -1,10 +1,11 @@
 <script lang="ts">
+  import PageTitle from '$lib/components/custom/structure/page-title.svelte';
   import { formatDatePPP, formatTimeBetween } from '$lib/utils/format';
 
   const { data } = $props();
 </script>
 
-<h1 class="mb-8 text-4xl">Transactions</h1>
+<PageTitle title="Mes transactions" subtitle="Liste des transactions effectuées" />
 {#if data.transactions.length > 0}
   <ul class="list-disc space-y-4">
     {#each data.transactions as transaction, index}
