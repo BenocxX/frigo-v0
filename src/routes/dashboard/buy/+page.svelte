@@ -12,6 +12,7 @@
   import Separator from '$lib/components/ui/separator/separator.svelte';
   import { fade } from 'svelte/transition';
   import { Button } from '$lib/components/ui/button';
+  import { formatCurrency } from '$lib/utils/format.js';
 
   const { data } = $props();
 
@@ -66,20 +67,15 @@
       (tp) => tp.productId !== id
     );
   }
-
-  function formatCurrency(value: number) {
-    return Intl.NumberFormat('fr-CA', {
-      style: 'currency',
-      currency: 'CAD',
-    }).format(value);
-  }
 </script>
 
 <form method="POST" action="?/newTransaction" class="flex flex-col gap-6" use:enhance>
   <Form.Fieldset {form} name="transactionProducts" class="space-y-0">
-    <div class="mb-4">
-      <Form.Legend class="text-2xl">Acheter des produits</Form.Legend>
-      <Form.Description>Sélectionnez les produits que vous souhaitez acheter.</Form.Description>
+    <div class="mb-8">
+      <Form.Legend class="mb-2 text-4xl">Acheter des produits</Form.Legend>
+      <Form.Description class="text-lg"
+        >Sélectionnez les produits que vous souhaitez acheter.</Form.Description
+      >
     </div>
     <ul role="list" class="mb-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {#each data.products as product}

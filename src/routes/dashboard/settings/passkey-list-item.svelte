@@ -11,8 +11,7 @@
     RenamePasskeySchema,
   } from '$lib/components/custom/forms/passkeys/schema';
   import RenamePasskeyForm from '$lib/components/custom/forms/passkeys/rename-passkey-form.svelte';
-  import { formatDate, formatDistance } from 'date-fns';
-  import { frCA } from 'date-fns/locale';
+  import { formatDatePPP, formatTimeBetween } from '$lib/utils/format';
 
   type Props = {
     passkey: Passkey;
@@ -37,16 +36,12 @@
       </p>
       <p class="mt-1 flex flex-col gap-1 text-sm text-muted-foreground sm:flex-row sm:items-center">
         <span>
-          Créée le {formatDate(passkey.createdAt, 'PPP', {
-            locale: frCA,
-          })}
+          Créée le {formatDatePPP(passkey.createdAt)}
         </span>
         <span class="hidden sm:inline">|</span>
         <span>
           Dernière utilisation il y a
-          {formatDistance(new Date(), passkey.lastUsed ?? '', {
-            locale: frCA,
-          })}
+          {formatTimeBetween(passkey.lastUsed ?? new Date())}
         </span>
       </p>
     </div>
