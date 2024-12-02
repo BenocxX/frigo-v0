@@ -34,8 +34,12 @@
     </Form.Control>
     <Form.FieldErrors />
   </Form.Field>
-  <div class="mt-2 space-x-2">
+  <div class="mt-4 flex flex-col gap-2">
     <Form.Button>Connexion</Form.Button>
-    <a href="/register" class={buttonVariants({ variant: 'secondary' })}>Inscription</a>
+    <a href="/login/passkey" class={buttonVariants({ variant: 'outline' })}>Utiliser une passkey</a>
   </div>
+  <p class="my-4 text-center">
+    Pas de compte?
+    <a href="/register" class="link">Inscription</a>
+  </p>
 </form>

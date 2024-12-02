@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { buttonVariants } from '$lib/components/ui/button';
   import * as Form from '$lib/components/ui/form/index.js';
   import { Input } from '$lib/components/ui/input';
   import { registerSchema, type RegisterSchema } from './schema';
@@ -43,8 +42,11 @@
     </Form.Control>
     <Form.FieldErrors />
   </Form.Field>
-  <div class="mt-2 space-x-2">
+  <div class="mt-4 flex flex-col gap-2">
     <Form.Button>Inscription</Form.Button>
-    <a href="/login" class={buttonVariants({ variant: 'secondary' })}>Connexion</a>
+    <p class="my-4 text-center">
+      Déjà un compte?
+      <a href="/login" class="link">Connexion</a>
+    </p>
   </div>
 </form>
