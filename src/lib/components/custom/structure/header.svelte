@@ -10,14 +10,15 @@
   import * as Sheet from '$lib/components/ui/sheet/index.js';
   import Footer from './footer.svelte';
 
-  const isAdmin = $page.data.user?.role === 'admin';
+  const user = $derived($page.data.user);
+  const isAdmin = $derived(user?.role === 'admin');
 
-  const links = [
-    { href: '/dashboard/buy', label: 'Acheter', isActive: true },
-    { href: '/dashboard/transactions', label: 'Mes transactions', isActive: true },
+  const links = $derived([
+    { href: '/dashboard/buy', label: 'Acheter', isActive: user !== null },
+    { href: '/dashboard/transactions', label: 'Mes transactions', isActive: user !== null },
     { href: '/dashboard/admin/products', label: 'Liste des produits', isActive: isAdmin },
     { href: '/dashboard/admin/transactions', label: 'Liste des transactions', isActive: isAdmin },
-  ];
+  ]);
 
   function getActiveLinks() {
     return links.filter((link) => link.isActive);
