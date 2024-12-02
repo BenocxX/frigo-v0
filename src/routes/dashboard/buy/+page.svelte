@@ -8,11 +8,12 @@
   import Plus from 'lucide-svelte/icons/plus';
   import Minus from 'lucide-svelte/icons/minus';
   import Trash from 'lucide-svelte/icons/trash';
-  import * as Table from '$lib/components/ui/table/index.js';
+  import { TableCell, TableHead } from '$lib/components/ui/table/index.js';
   import Separator from '$lib/components/ui/separator/separator.svelte';
   import { fade } from 'svelte/transition';
   import { Button } from '$lib/components/ui/button';
   import { formatCurrency } from '$lib/utils/format.js';
+  import SimpleTable from '$lib/components/custom/ui/tables/simple-table.svelte';
 
   const { data } = $props();
 
@@ -88,37 +89,31 @@
     <div transition:fade={{ duration: 250 }} class="flex flex-col gap-4">
       <Separator />
       <h3 class="text-xl">Produits dans le panier</h3>
-      <Table.Root>
-        <Table.Header>
-          <Table.Row>
-            <Table.Head class="w-full whitespace-nowrap ">Nom</Table.Head>
-            <Table.Head class="text-right">Quantité</Table.Head>
-            <Table.Head class="text-right">Prix</Table.Head>
-            <Table.Head class="text-right">Supprimer</Table.Head>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {#each $formData.transactionProducts as { productId, quantity }}
-            {@const product = data.products.find((p) => p.id === productId)!}
-            <Table.Row>
-              <Table.Cell class="w-full whitespace-nowrap font-medium">{product?.name}</Table.Cell>
-              <Table.Cell class="text-right">{quantity}</Table.Cell>
-              <Table.Cell class="text-right">{formatCurrency(product.price * quantity)}</Table.Cell>
-              <Table.Cell class="flex w-max items-center gap-2">
-                <Button size="icon" variant="secondary" onclick={() => addProduct(productId)}>
-                  <Plus />
-                </Button>
-                <Button size="icon" variant="secondary" onclick={() => removeProduct(productId)}>
-                  <Minus />
-                </Button>
-                <Button size="icon" variant="secondary" onclick={() => deleteProduct(productId)}>
-                  <Trash />
-                </Button>
-              </Table.Cell>
-            </Table.Row>
-          {/each}
-        </Table.Body>
-      </Table.Root>
+      <SimpleTable rows={$formData.transactionProducts}>
+        {#snippet tableHead()}
+          <TableHead class="w-full whitespace-nowrap">Nom</TableHead>
+          <TableHead class="text-right">Quantité</TableHead>
+          <TableHead class="text-right">Prix</TableHead>
+          <TableHead class="text-right">Supprimer</TableHead>
+        {/snippet}
+        {#snippet tableRow({ row })}
+          {@const product = data.products.find((p) => p.id === row.productId)!}
+          <TableCell class="font-medium">{product?.name}</TableCell>
+          <TableCell class="text-right">{row.quantity}</TableCell>
+          <TableCell class="text-right">{formatCurrency(product.price * row.quantity)}</TableCell>
+          <TableCell class="flex w-max items-center gap-2">
+            <Button size="icon" variant="secondary" onclick={() => addProduct(row.productId)}>
+              <Plus />
+            </Button>
+            <Button size="icon" variant="secondary" onclick={() => removeProduct(row.productId)}>
+              <Minus />
+            </Button>
+            <Button size="icon" variant="secondary" onclick={() => deleteProduct(row.productId)}>
+              <Trash />
+            </Button>
+          </TableCell>
+        {/snippet}
+      </SimpleTable>
       <Form.Button class="w-max">Acheter</Form.Button>
     </div>
   {/if}

@@ -39,6 +39,7 @@
     "zod": "^3.23.8"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.2",
     "@internationalized/date": "^3.6.0",
     "@node-rs/argon2": "^1.1.0",
     "@oslojs/crypto": "^1.0.1",
