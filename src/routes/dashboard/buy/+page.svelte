@@ -8,7 +8,7 @@
   import Plus from 'lucide-svelte/icons/plus';
   import Minus from 'lucide-svelte/icons/minus';
   import Trash from 'lucide-svelte/icons/trash';
-  import { TableCell, TableHead } from '$lib/components/ui/table/index.js';
+  import * as Table from '$lib/components/ui/table/index.js';
   import Separator from '$lib/components/ui/separator/separator.svelte';
   import { fade } from 'svelte/transition';
   import { Button } from '$lib/components/ui/button';
@@ -68,6 +68,13 @@
       (tp) => tp.productId !== id
     );
   }
+
+  function calculateTotal() {
+    return $formData.transactionProducts.reduce((acc, tp) => {
+      const product = data.products.find((p) => p.id === tp.productId)!;
+      return acc + product.price * tp.quantity;
+    }, 0);
+  }
 </script>
 
 <form method="POST" action="?/newTransaction" class="flex flex-col gap-6" use:enhance>
@@ -89,19 +96,21 @@
     <div transition:fade={{ duration: 250 }} class="flex flex-col gap-4">
       <Separator />
       <h3 class="text-xl">Produits dans le panier</h3>
-      <SimpleTable rows={$formData.transactionProducts}>
-        {#snippet tableHead()}
-          <TableHead class="w-full whitespace-nowrap">Nom</TableHead>
-          <TableHead class="text-right">Quantité</TableHead>
-          <TableHead class="text-right">Prix</TableHead>
-          <TableHead class="text-right">Supprimer</TableHead>
+      <SimpleTable dataset={$formData.transactionProducts}>
+        {#snippet headRow()}
+          <Table.Head class="w-full whitespace-nowrap">Nom</Table.Head>
+          <Table.Head class="text-right">Quantité</Table.Head>
+          <Table.Head class="text-right">Prix</Table.Head>
+          <Table.Head class="text-right">Actions</Table.Head>
         {/snippet}
-        {#snippet tableRow({ row })}
+        {#snippet dataRow({ row })}
           {@const product = data.products.find((p) => p.id === row.productId)!}
-          <TableCell class="font-medium">{product?.name}</TableCell>
-          <TableCell class="text-right">{row.quantity}</TableCell>
-          <TableCell class="text-right">{formatCurrency(product.price * row.quantity)}</TableCell>
-          <TableCell class="flex w-max items-center gap-2">
+          <Table.Cell class="font-medium">{product?.name}</Table.Cell>
+          <Table.Cell class="text-right">{row.quantity}</Table.Cell>
+          <Table.Cell class="text-right">
+            {formatCurrency(product.price * row.quantity)}
+          </Table.Cell>
+          <Table.Cell class="flex w-max items-center gap-2">
             <Button size="icon" variant="secondary" onclick={() => addProduct(row.productId)}>
               <Plus />
             </Button>
@@ -111,10 +120,19 @@
             <Button size="icon" variant="secondary" onclick={() => deleteProduct(row.productId)}>
               <Trash />
             </Button>
-          </TableCell>
+          </Table.Cell>
+        {/snippet}
+        {#snippet finalRowChild()}
+          <Table.Row class="hover:bg-transparent dark:hover:bg-transparent">
+            <Table.Cell class="font-medium">Total</Table.Cell>
+            <Table.Cell class="text-right"></Table.Cell>
+            <Table.Cell class="text-right">{formatCurrency(calculateTotal())}</Table.Cell>
+            <Table.Cell>
+              <Form.Button class="w-full">Acheter</Form.Button>
+            </Table.Cell>
+          </Table.Row>
         {/snippet}
       </SimpleTable>
-      <Form.Button class="w-max">Acheter</Form.Button>
     </div>
   {/if}
 </form>

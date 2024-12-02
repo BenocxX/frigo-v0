@@ -7,25 +7,57 @@
   type TItem = T;
 
   type Props = {
-    rows: TItem[];
-    tableHead: Snippet;
-    tableRow: Snippet<[{ row: TItem }]>;
+    dataset: TItem[];
+    headRow: Snippet;
+    headRowChild?: Snippet;
+    dataRow: Snippet<[{ row: TItem }]>;
+    dataRowChild?: Snippet<[{ row: TItem }]>;
+    finalRow?: Snippet;
+    finalRowChild?: Snippet;
   };
 
-  const { rows, tableHead, tableRow }: Props = $props();
+  const { dataset, headRow, headRowChild, dataRow, dataRowChild, finalRow, finalRowChild }: Props =
+    $props();
 </script>
 
 <Table.Root>
   <Table.Header>
-    <Table.Row>
-      {@render tableHead()}
-    </Table.Row>
+    {@render headRowRenderer()}
   </Table.Header>
   <Table.Body>
-    {#each rows as row}
-      <Table.Row>
-        {@render tableRow({ row })}
-      </Table.Row>
+    {#each dataset as row}
+      {@render dataRowRenderer({ row })}
     {/each}
+    {@render finalRowRenderer()}
   </Table.Body>
 </Table.Root>
+
+{#snippet headRowRenderer()}
+  {#if headRowChild}
+    {@render headRowChild()}
+  {:else if headRow}
+    <Table.Row>
+      {@render headRow()}
+    </Table.Row>
+  {/if}
+{/snippet}
+
+{#snippet dataRowRenderer({ row }: { row: TItem })}
+  {#if dataRowChild}
+    {@render dataRowChild({ row })}
+  {:else if dataRow}
+    <Table.Row>
+      {@render dataRow({ row })}
+    </Table.Row>
+  {/if}
+{/snippet}
+
+{#snippet finalRowRenderer()}
+  {#if finalRowChild}
+    {@render finalRowChild()}
+  {:else if finalRow}
+    <Table.Row>
+      {@render finalRow()}
+    </Table.Row>
+  {/if}
+{/snippet}
