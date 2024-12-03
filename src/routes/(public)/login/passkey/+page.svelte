@@ -1,5 +1,5 @@
 <script lang="ts">
-  import PasskeyLoginForm from './passkey-login-form.svelte';
+  import PasskeyLoginForm from '$lib/components/custom/forms/passkeys/passkey-login-form.svelte';
 
   const { data } = $props();
 </script>

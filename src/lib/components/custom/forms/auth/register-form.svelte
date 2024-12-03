@@ -1,9 +1,9 @@
 <script lang="ts">
   import * as Form from '$lib/components/ui/form/index.js';
   import { Input } from '$lib/components/ui/input';
-  import { registerSchema, type RegisterSchema } from './schema';
   import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
+  import { registerSchema, type RegisterSchema } from './schema';
 
   export let data: SuperValidated<Infer<RegisterSchema>>;
 

@@ -1,14 +1,14 @@
 import { fail, redirect } from '@sveltejs/kit';
 
 import { setError, superValidate } from 'sveltekit-superforms';
-import { loginSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { AuthService } from '$lib/server/services/auth-service';
+import { loginSchema } from '$lib/components/custom/forms/auth/schema';
 
 export const load = async ({ url }) => {
   const form = await superValidate(zod(loginSchema), {
     defaults: {
-      username: url.searchParams.get('username'),
+      username: url.searchParams.get('username') ?? '',
       password: '',
     },
   });

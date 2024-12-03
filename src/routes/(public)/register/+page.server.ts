@@ -1,8 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
-import { registerSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { AuthService } from '$lib/server/services/auth-service';
+import { registerSchema } from '$lib/components/custom/forms/auth/schema';
 
 export const load = async () => {
   return {

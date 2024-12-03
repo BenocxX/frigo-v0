@@ -1,6 +1,6 @@
 <script lang="ts">
+  import RegisterForm from '$lib/components/custom/forms/auth/register-form.svelte';
   import type { PageData } from './$types';
-  import RegisterForm from './register-form.svelte';
 
   export let data: PageData;
 </script>
