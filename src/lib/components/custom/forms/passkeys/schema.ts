@@ -14,5 +14,6 @@ export const renamePasskeySchema = z.object({
 });
 
 export type PasskeyLoginSchema = typeof passkeyLoginSchema;
+export type PasskeyLoginData = z.infer<typeof passkeyLoginSchema>;
 export type DeletePasskeySchema = typeof deletePasskeySchema;
 export type RenamePasskeySchema = typeof renamePasskeySchema;

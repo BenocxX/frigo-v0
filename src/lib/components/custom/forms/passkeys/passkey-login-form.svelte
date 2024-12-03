@@ -6,41 +6,31 @@
   import { type SuperValidated, type Infer, superForm, setError } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
   import { makeSearchParams } from '$lib/utils/search-params';
-  import type { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/types';
-  import { startAuthentication } from '@simplewebauthn/browser';
   import { goto } from '$app/navigation';
+  import {
+    PasskeyClientService,
+    type PasskeyAuthGenerateActionResult,
+  } from '$lib/client/service/PasskeyClientService';
 
   const { data }: { data: SuperValidated<Infer<PasskeyLoginSchema>> } = $props();
 
   const form = superForm(data, {
     validators: zodClient(passkeyLoginSchema),
     onResult: async ({ result }) => {
-      if (result.type !== 'success') {
-        return;
-      }
+      if (result.type !== 'success') return;
 
-      const { form, optionsJSON } = result.data as {
-        form: typeof data;
-        optionsJSON: PublicKeyCredentialRequestOptionsJSON;
-      };
+      const { form, optionsJSON } = result.data as PasskeyAuthGenerateActionResult<typeof data>;
 
-      try {
-        const authentificationResponse = await startAuthentication({ optionsJSON });
-
-        const verifyResponse = await fetch('/api/passkeys/verify', {
-          method: 'POST',
-          body: JSON.stringify({ ...authentificationResponse, ...$formData }),
-        });
-
-        const verifyResult = (await verifyResponse.json()) as { verified: boolean };
-
-        if (verifyResult.verified) {
-          goto('/dashboard');
-        }
-      } catch (error) {
-        console.log(error);
-        setError(form, 'username', 'Une erreur est survenue');
-      }
+      const passkeyClientService = new PasskeyClientService();
+      await passkeyClientService.authenticate('/api/passkeys/verify', {
+        form,
+        optionsJSON,
+        onSuccess: () => goto('/dashboard'),
+        onError: (error) => {
+          console.log(error);
+          setError(form, 'username', 'Une erreur est survenue');
+        },
+      });
     },
   });
 

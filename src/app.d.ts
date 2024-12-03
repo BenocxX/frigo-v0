@@ -10,6 +10,10 @@ declare global {
     interface PageData {
       user: App.Locals['user'];
     }
+
+    type PasskeyLoginData = {
+      username: string;
+    };
   }
 }
 

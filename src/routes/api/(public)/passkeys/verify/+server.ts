@@ -3,11 +3,17 @@ import type { RequestHandler } from './$types';
 import { PasskeyService } from '$lib/server/services/passkey-service';
 import { db } from '$lib/server/prisma';
 import { AuthService } from '$lib/server/services/auth-service';
+import type { PasskeyAuthVerifyBody } from '$lib/client/service/PasskeyClientService';
 
 export const POST: RequestHandler = async (event) => {
-  const body = await event.request.json();
+  const body = (await event.request.json()) as PasskeyAuthVerifyBody;
+  const { authentificationResponse, loginData } = body;
 
-  const user = await db.user.findFirst({ where: { username: body.username } });
+  if (!authentificationResponse || !loginData) {
+    throw new Error('Invalid request');
+  }
+
+  const user = await db.user.findFirst({ where: { username: loginData.username } });
 
   if (!user) {
     throw Error('User not found');
@@ -20,24 +26,24 @@ export const POST: RequestHandler = async (event) => {
     throw Error('No current options');
   }
 
-  const passkey = await db.passkey.findFirst({ where: { id: body.id } });
+  const passkey = await db.passkey.findFirst({ where: { id: authentificationResponse.id } });
   if (!passkey) {
     throw Error('Passkey not found');
   }
 
   try {
     const verification = await passkeyService.verifyAuthenticationResponse(
-      body,
+      authentificationResponse,
       currentOptions,
       passkey
     );
 
-    const authService = new AuthService();
-    await authService.createSession(event, user);
-
     if (!verification.verified) {
       throw new Error('Authentication failed');
     }
+
+    const authService = new AuthService();
+    await authService.createSession(event, user);
 
     return json({
       verified: verification.verified,
