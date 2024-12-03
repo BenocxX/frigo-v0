@@ -2,7 +2,7 @@
   import { buttonVariants } from '$lib/components/ui/button';
   import * as Form from '$lib/components/ui/form/index.js';
   import { Input } from '$lib/components/ui/input';
-  import { makeSearchParams } from '$lib/utils/search-params.svelte';
+  import { makeSearchParams } from '$lib/utils/search-params';
   import { loginSchema, type LoginSchema } from './schema';
   import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';

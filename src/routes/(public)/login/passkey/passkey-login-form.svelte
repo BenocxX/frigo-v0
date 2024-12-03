@@ -7,7 +7,7 @@
   import { type SuperValidated, type Infer, superForm, setError } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
   import { goto } from '$app/navigation';
-  import { makeSearchParams } from '$lib/utils/search-params.svelte';
+  import { makeSearchParams } from '$lib/utils/search-params';
 
   const { data }: { data: SuperValidated<Infer<PasskeyLoginSchema>> } = $props();
 
