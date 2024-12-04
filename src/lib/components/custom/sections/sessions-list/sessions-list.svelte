@@ -12,10 +12,11 @@
 
   type Props = {
     sessions: PublicSessionDTO[];
+    currentSessionPublicId: string;
     deleteForm: SuperValidated<Infer<DeleteSessionSchema>>;
   };
 
-  const { sessions, deleteForm }: Props = $props();
+  const { sessions, currentSessionPublicId, deleteForm }: Props = $props();
 </script>
 
 <div class="grid grid-cols-1 gap-x-8 gap-y-10 py-12 md:grid-cols-3">
@@ -46,6 +47,9 @@
     <div class="overflow-x-hidden pr-8">
       <p class="truncate">{session.name}</p>
       <div class="mt-1 flex flex-wrap gap-1.5">
+        {#if session.publicId === currentSessionPublicId}
+          <Badge variant="success">Session actuelle</Badge>
+        {/if}
         <Badge>Créée le {formatDatePPP(session.createdAt)}</Badge>
         <Badge>Expire dans {formatTimeBetween(session.expiresAt)}</Badge>
         <Badge>

@@ -36,9 +36,7 @@ export const load = async (event) => {
     deleteSessionForm: await superValidate(zod(deleteSessionSchema)),
     passkeys: sortedPasskeys,
     sessions: sortedSessions,
-    currentSession: {
-      publicId: locals.session!.publicId,
-    },
+    currentSessionPublicId: locals.session!.publicId,
   };
 };
 
@@ -54,6 +52,8 @@ export const actions = {
       where: { id: form.data.passkeyId },
       data: { name: form.data.name },
     });
+
+    return { form };
   },
   deletePasskey: async (event) => {
     const form = await superValidate(event, zod(deletePasskeySchema));
@@ -63,6 +63,8 @@ export const actions = {
     }
 
     await db.passkey.delete({ where: { id: form.data.passkeyId } });
+
+    return { form };
   },
   resetPassword: async (event) => {
     const form = await superValidate(event, zod(resetPasswordSchema));

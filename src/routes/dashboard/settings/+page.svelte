@@ -25,5 +25,9 @@
     </div>
     <ResetPasswordForm class="flex flex-col gap-4 md:col-span-2" data={data.resetPasswordForm} />
   </div>
-  <SessionsList sessions={data.sessions} deleteForm={data.deleteSessionForm} />
+  <SessionsList
+    sessions={data.sessions}
+    currentSessionPublicId={data.currentSessionPublicId}
+    deleteForm={data.deleteSessionForm}
+  />
 </div>
