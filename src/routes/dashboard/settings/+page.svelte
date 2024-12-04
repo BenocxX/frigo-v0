@@ -15,6 +15,7 @@
       rename: data.renamePasskeyForm,
     }}
     passkeys={data.passkeys}
+    passkeyRegistrationOptions={data.passkeyRegistrationOptions}
   />
   <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b pb-12 pt-12 md:grid-cols-3">
     <div>

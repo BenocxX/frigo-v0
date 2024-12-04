@@ -12,18 +12,15 @@ import type {
 } from '@simplewebauthn/types';
 import { db } from '../prisma';
 import type { Passkey, User } from '@prisma/client';
+import { env } from '$env/dynamic/private';
 
 export class PasskeyService {
-  public static readonly RP_NAME = 'Frigo V0';
-  public static readonly RP_ID = 'localhost';
-  public static readonly ORIGIN = `http://${this.RP_ID}:5173`;
-
   public async generateRegistrationOptions(user: NonNullable<App.Locals['user']>) {
     const userPasskeys = await db.passkey.findMany({ where: { userId: user.id } });
 
     const options = await generateRegistrationOptions({
-      rpName: PasskeyService.RP_NAME,
-      rpID: PasskeyService.RP_ID,
+      rpName: env.PASSKEY_RP_NAME,
+      rpID: env.PASSKEY_RP_ID,
       userName: user.username,
       // Don't prompt users for additional information about the authenticator
       // (Recommended for smoother UX)
@@ -61,7 +58,7 @@ export class PasskeyService {
     const userPasskeys = await db.passkey.findMany({ where: { userId: user.id } });
 
     const options = await generateAuthenticationOptions({
-      rpID: PasskeyService.RP_ID,
+      rpID: env.PASSKEY_RP_ID,
       // Require users to use a previously-registered authenticator
       allowCredentials: userPasskeys.map((passkey) => ({
         id: passkey.id,
@@ -91,8 +88,8 @@ export class PasskeyService {
     const verification = await verifyRegistrationResponse({
       response,
       expectedChallenge: currentOptions.challenge,
-      expectedOrigin: PasskeyService.ORIGIN,
-      expectedRPID: PasskeyService.RP_ID,
+      expectedOrigin: env.PASSKEY_ORIGIN,
+      expectedRPID: env.PASSKEY_RP_ID,
     });
 
     if (!verification.verified || !verification.registrationInfo) {
@@ -134,8 +131,8 @@ export class PasskeyService {
     const verification = await verifyAuthenticationResponse({
       response,
       expectedChallenge: currentOptions.challenge,
-      expectedOrigin: PasskeyService.ORIGIN,
-      expectedRPID: PasskeyService.RP_ID,
+      expectedOrigin: env.PASSKEY_ORIGIN,
+      expectedRPID: env.PASSKEY_RP_ID,
       credential: {
         id: passkey.id,
         publicKey: passkey.publicKey,

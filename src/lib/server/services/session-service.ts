@@ -35,8 +35,6 @@ export class SessionService {
     const session = await db.session.create({
       data: {
         id: sessionId,
-        // Use the same algorithm to generate the public ID as the token. This one has nothing to do
-        // with the session security, it's just a way to generate a unique ID for the session.
         publicId,
         userId,
         name,

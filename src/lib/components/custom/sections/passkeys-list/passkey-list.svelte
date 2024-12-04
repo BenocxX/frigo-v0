@@ -1,38 +1,33 @@
 <script lang="ts">
-  import { invalidateAll } from '$app/navigation';
   import { Button } from '$lib/components/ui/button';
   import type { Passkey } from '@prisma/client';
-  import { startRegistration } from '@simplewebauthn/browser';
   import KeyRound from 'lucide-svelte/icons/key-round';
   import PasskeyListItem from './passkey-list-item.svelte';
   import type { Infer, SuperValidated } from 'sveltekit-superforms';
-  import type {
-    DeletePasskeySchema,
-    RenamePasskeySchema,
+  import {
+    type DeletePasskeySchema,
+    type RenamePasskeySchema,
   } from '$lib/components/custom/forms/passkeys/schema';
   import { Separator } from '$lib/components/ui/separator';
+  import type { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/types';
+  import { invalidateAll } from '$app/navigation';
+  import { startRegistration } from '@simplewebauthn/browser';
 
   type Props = {
     passkeys: Passkey[];
+    passkeyRegistrationOptions: PublicKeyCredentialCreationOptionsJSON;
     forms: {
       delete: SuperValidated<Infer<DeletePasskeySchema>>;
       rename: SuperValidated<Infer<RenamePasskeySchema>>;
     };
   };
 
-  const { passkeys, forms }: Props = $props();
+  const { passkeys, passkeyRegistrationOptions, forms }: Props = $props();
 
   let error = $state('');
 
   async function onNewPasskey() {
-    const response = await fetch('/api/dashboard/passkeys/register', { method: 'POST' });
-    const result = await response.json();
-
-    if (!result) {
-      error = 'Une erreur est survenue lors de la génération de la passkey.';
-    }
-
-    const attResp = await startRegistration({ optionsJSON: result });
+    const attResp = await startRegistration({ optionsJSON: passkeyRegistrationOptions });
 
     // TODO: Use sonner toast
     const verificationResponse = await fetch('/api/dashboard/passkeys/verify', {

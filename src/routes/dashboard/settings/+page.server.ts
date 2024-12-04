@@ -8,6 +8,7 @@ import {
 } from '$lib/components/custom/forms/passkeys/schema';
 import { resetPasswordSchema } from '$lib/components/custom/forms/auth/schema';
 import { deleteSessionSchema } from '$lib/components/custom/forms/sessions/schema.js';
+import { PasskeyService } from '$lib/server/services/passkey-service';
 
 export const load = async (event) => {
   const { locals } = event;
@@ -29,11 +30,15 @@ export const load = async (event) => {
 
   const sortedSessions = sessions.sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime());
 
+  const passkeyService = new PasskeyService();
+  const passkeyRegistrationOptions = await passkeyService.generateRegistrationOptions(locals.user!);
+
   return {
     deletePasskeyForm: await superValidate(zod(deletePasskeySchema)),
     renamePasskeyForm: await superValidate(zod(renamePasskeySchema)),
     resetPasswordForm: await superValidate(zod(resetPasswordSchema)),
     deleteSessionForm: await superValidate(zod(deleteSessionSchema)),
+    passkeyRegistrationOptions,
     passkeys: sortedPasskeys,
     sessions: sortedSessions,
     currentSessionPublicId: locals.session!.publicId,
