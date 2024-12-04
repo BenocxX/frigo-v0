@@ -27,6 +27,7 @@ model User {
 
 model Session {
   id        String   @id
+  publicId  String   @unique
   userId    String
   name      String
   lastUsed  DateTime

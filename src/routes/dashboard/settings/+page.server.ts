@@ -9,9 +9,19 @@ import {
 import { resetPasswordSchema } from '$lib/components/custom/forms/auth/schema';
 import { deleteSessionSchema } from '$lib/components/custom/forms/sessions/schema.js';
 
-export const load = async ({ locals }) => {
+export const load = async (event) => {
+  const { locals } = event;
   const passkeys = await db.passkey.findMany({ where: { userId: locals.user!.id } });
-  const sessions = await db.session.findMany({ where: { userId: locals.user!.id } });
+  const sessions = await db.session.findMany({
+    where: { userId: locals.user!.id },
+    select: {
+      createdAt: true,
+      expiresAt: true,
+      lastUsed: true,
+      publicId: true,
+      name: true,
+    },
+  });
 
   const sortedPasskeys = passkeys.sort(
     (a, b) => (b.lastUsed || b.createdAt).getTime() - (a.lastUsed || a.createdAt).getTime()
@@ -26,6 +36,9 @@ export const load = async ({ locals }) => {
     deleteSessionForm: await superValidate(zod(deleteSessionSchema)),
     passkeys: sortedPasskeys,
     sessions: sortedSessions,
+    currentSession: {
+      publicId: locals.session!.publicId,
+    },
   };
 };
 
@@ -82,7 +95,7 @@ export const actions = {
 
     await db.session.delete({
       where: {
-        id: form.data.sessionId,
+        publicId: form.data.publicId,
         userId: event.locals.user!.id,
       },
     });

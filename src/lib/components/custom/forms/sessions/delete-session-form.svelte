@@ -2,15 +2,15 @@
   import * as Form from '$lib/components/ui/form/index.js';
   import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
   import { deleteSessionSchema, type DeleteSessionSchema } from './schema';
-  import type { Session } from '@prisma/client';
   import { makeToastInstance } from '$lib/utils/toasts';
   import { zodClient } from 'sveltekit-superforms/adapters';
   import { Input } from '$lib/components/ui/input';
   import { Button, type ButtonProps } from '$lib/components/ui/button';
   import Trash from 'lucide-svelte/icons/trash';
+  import type { PublicSessionDTO } from '$lib/utils/dto';
 
   type Props = {
-    session: Session;
+    session: PublicSessionDTO;
     data: SuperValidated<Infer<DeleteSessionSchema>>;
     buttonProps: ButtonProps;
   };
@@ -20,7 +20,7 @@
   const toastInstance = makeToastInstance();
 
   const form = superForm(data, {
-    id: `delete-session-${session.id}`,
+    id: `delete-session-${session.publicId}`,
     validators: zodClient(deleteSessionSchema),
     onSubmit: () => toastInstance.loading('Suppression en cours...'),
     onResult: ({ result }) => {
@@ -34,14 +34,14 @@
 
   const { form: formData, enhance } = form;
 
-  $formData.sessionId = session.id;
+  $formData.publicId = session.publicId;
 </script>
 
 <form method="POST" action="?/deleteSession" class="w-full sm:w-max" use:enhance>
-  <Form.Field {form} name="sessionId">
+  <Form.Field {form} name="publicId">
     <Form.Control>
       {#snippet children({ props })}
-        <Input type="hidden" {...props} bind:value={$formData.sessionId} />
+        <Input type="hidden" {...props} bind:value={$formData.publicId} />
       {/snippet}
     </Form.Control>
   </Form.Field>

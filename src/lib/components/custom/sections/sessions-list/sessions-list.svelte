@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { Session } from '@prisma/client';
   import AlertDialogConfirm from '../../ui/dialogs/alert-dialog-confirm.svelte';
   import { Button } from '$lib/components/ui/button';
   import Trash from 'lucide-svelte/icons/trash';
@@ -9,9 +8,10 @@
   import DeleteSessionForm from '../../forms/sessions/delete-session-form.svelte';
   import type { Infer, SuperValidated } from 'sveltekit-superforms';
   import type { DeleteSessionSchema } from '../../forms/sessions/schema';
+  import type { PublicSessionDTO } from '$lib/utils/dto';
 
   type Props = {
-    sessions: Session[];
+    sessions: PublicSessionDTO[];
     deleteForm: SuperValidated<Infer<DeleteSessionSchema>>;
   };
 
@@ -41,10 +41,10 @@
   </div>
 </div>
 
-{#snippet sessionListItem({ session }: { session: Session })}
+{#snippet sessionListItem({ session }: { session: PublicSessionDTO })}
   <li class="flex items-center justify-between">
-    <div class="pr-8">
-      <p>{session.name}</p>
+    <div class="overflow-x-hidden pr-8">
+      <p class="truncate">{session.name}</p>
       <div class="mt-1 flex flex-wrap gap-1.5">
         <Badge>Créée le {formatDatePPP(session.createdAt)}</Badge>
         <Badge>Expire dans {formatTimeBetween(session.expiresAt)}</Badge>

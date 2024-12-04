@@ -50,7 +50,8 @@ export class AuthService {
     const sessionService = new SessionService();
 
     const sessionToken = sessionService.generateToken();
-    const session = await sessionService.create(sessionToken, user.id);
+    const sessionName = event.request.headers.get('user-agent') ?? 'Unknown';
+    const session = await sessionService.create(sessionToken, user.id, sessionName);
     sessionService.setCookie(event, sessionToken, session.expiresAt);
 
     return session;
