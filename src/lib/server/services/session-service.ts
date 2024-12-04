@@ -28,13 +28,16 @@ export class SessionService {
   /** Creates a new session in the database. The session id is the SHA-256 hash of the token. */
   public async create(token: string, userId: string, name: string): Promise<Session> {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+    const publicId = encodeHexLowerCase(
+      sha256(new TextEncoder().encode(`session-public-id-${token}-${new Date().toString()}`))
+    );
 
     const session = await db.session.create({
       data: {
         id: sessionId,
         // Use the same algorithm to generate the public ID as the token. This one has nothing to do
         // with the session security, it's just a way to generate a unique ID for the session.
-        publicId: this.generateToken(),
+        publicId,
         userId,
         name,
         lastUsed: new Date(),
