@@ -12,6 +12,7 @@
   } from '$lib/components/custom/forms/passkeys/schema';
   import RenamePasskeyForm from '$lib/components/custom/forms/passkeys/rename-passkey-form.svelte';
   import { formatDatePPP, formatTimeBetween } from '$lib/utils/format';
+  import Badge from '../../ui/badges/badge.svelte';
 
   type Props = {
     passkey: Passkey;
@@ -34,16 +35,12 @@
       <p>
         {passkey.name}
       </p>
-      <p class="mt-1 flex flex-col gap-1 text-sm text-muted-foreground sm:flex-row sm:items-center">
-        <span>
-          Créée le {formatDatePPP(passkey.createdAt)}
-        </span>
-        <span class="hidden sm:inline">|</span>
-        <span>
-          Dernière utilisation il y a
-          {formatTimeBetween(passkey.lastUsed ?? new Date())}
-        </span>
-      </p>
+      <div class="mt-1 flex flex-wrap gap-1.5">
+        <Badge>Créée le {formatDatePPP(passkey.createdAt)}</Badge>
+        <Badge>
+          Dernière utilisation il y a {formatTimeBetween(passkey.lastUsed ?? new Date())}
+        </Badge>
+      </div>
     </div>
   {/if}
   <div class="flex items-center gap-2">

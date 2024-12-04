@@ -7,15 +7,25 @@ import {
   renamePasskeySchema,
 } from '$lib/components/custom/forms/passkeys/schema';
 import { resetPasswordSchema } from '$lib/components/custom/forms/auth/schema';
+import { deleteSessionSchema } from '$lib/components/custom/forms/sessions/schema.js';
 
 export const load = async ({ locals }) => {
   const passkeys = await db.passkey.findMany({ where: { userId: locals.user!.id } });
+  const sessions = await db.session.findMany({ where: { userId: locals.user!.id } });
+
+  const sortedPasskeys = passkeys.sort(
+    (a, b) => (b.lastUsed || b.createdAt).getTime() - (a.lastUsed || a.createdAt).getTime()
+  );
+
+  const sortedSessions = sessions.sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime());
 
   return {
     deletePasskeyForm: await superValidate(zod(deletePasskeySchema)),
     renamePasskeyForm: await superValidate(zod(renamePasskeySchema)),
     resetPasswordForm: await superValidate(zod(resetPasswordSchema)),
-    passkeys,
+    deleteSessionForm: await superValidate(zod(deleteSessionSchema)),
+    passkeys: sortedPasskeys,
+    sessions: sortedSessions,
   };
 };
 
@@ -60,6 +70,22 @@ export const actions = {
     }
 
     await authService.changePassword(user, form.data.newPassword);
+
+    return { form };
+  },
+  deleteSession: async (event) => {
+    const form = await superValidate(event, zod(deleteSessionSchema));
+
+    if (!form.valid) {
+      return fail(400, { form });
+    }
+
+    await db.session.delete({
+      where: {
+        id: form.data.sessionId,
+        userId: event.locals.user!.id,
+      },
+    });
 
     return { form };
   },

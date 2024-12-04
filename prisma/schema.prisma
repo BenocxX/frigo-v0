@@ -28,8 +28,12 @@ model User {
 model Session {
   id        String   @id
   userId    String
+  name      String
+  lastUsed  DateTime
   expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Passkey {

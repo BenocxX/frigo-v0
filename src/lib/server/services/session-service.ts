@@ -29,13 +29,15 @@ export class SessionService {
   public async create(token: string, userId: string): Promise<Session> {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 
-    const session: Session = {
-      id: sessionId,
-      userId,
-      expiresAt: new Date(Date.now() + SessionService.EXPIRY_DELAY * 30),
-    };
-
-    await db.session.create({ data: session });
+    const session = await db.session.create({
+      data: {
+        id: sessionId,
+        userId,
+        name: 'New session',
+        lastUsed: new Date(),
+        expiresAt: new Date(Date.now() + SessionService.EXPIRY_DELAY),
+      },
+    });
 
     return session;
   }
@@ -73,13 +75,16 @@ export class SessionService {
     }
 
     const needRenew = Date.now() >= session.expiresAt.getTime() - SessionService.REFRESH_DELAY;
-    if (needRenew) {
-      session.expiresAt = new Date(Date.now() + SessionService.EXPIRY_DELAY);
-      await db.session.update({
-        where: { id: session.id },
-        data: { expiresAt: session.expiresAt },
-      });
-    }
+
+    await db.session.update({
+      where: { id: session.id },
+      data: {
+        lastUsed: new Date(),
+        expiresAt: needRenew
+          ? new Date(Date.now() + SessionService.EXPIRY_DELAY) // Refresh the session for 30 days
+          : session.expiresAt,
+      },
+    });
 
     return { session, user };
   }
