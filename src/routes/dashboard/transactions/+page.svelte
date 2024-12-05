@@ -1,25 +1,38 @@
 <script lang="ts">
   import PageTitle from '$lib/components/custom/structure/page-title.svelte';
-  import { formatDatePPP, formatTimeBetween } from '$lib/utils/format';
+  import Badge from '$lib/components/custom/ui/badges/badge.svelte';
+  import SimpleTable from '$lib/components/custom/ui/tables/simple-table.svelte';
+  import * as Table from '$lib/components/ui/table';
+  import { formatCurrency, formatDateFrench } from '$lib/utils/format';
 
   const { data } = $props();
 </script>
 
 <PageTitle title="Mes transactions" subtitle="Liste des transactions effectuées" />
 {#if data.transactions.length > 0}
-  <ul class="list-disc space-y-4">
-    {#each data.transactions as transaction, index}
-      <li>
-        <p>Transaction #{index + 1}</p>
-        <p
-          class="mt-1 flex flex-col gap-1 text-sm text-muted-foreground sm:flex-row sm:items-center"
-        >
-          Faites le {formatDatePPP(transaction.createdAt)}, il y a
-          {formatTimeBetween(transaction.createdAt)}.
-        </p>
-      </li>
-    {/each}
-  </ul>
+  <SimpleTable dataset={data.transactions}>
+    {#snippet headRow()}
+      <Table.Head class="w-[175px] min-w-[175px]">Date</Table.Head>
+      <Table.Head>Produits</Table.Head>
+      <Table.Head class="text-right">Total</Table.Head>
+    {/snippet}
+    {#snippet dataRow({ row })}
+      <Table.Cell>
+        {formatDateFrench(row.createdAt, 'PP')} à {formatDateFrench(row.createdAt, 'p')}
+      </Table.Cell>
+      <Table.Cell class="flex flex-wrap gap-1">
+        {#each row.transactionProducts as { quantity, product }}
+          <Badge>
+            {quantity}x {product.name}
+          </Badge>
+        {/each}
+      </Table.Cell>
+      <Table.Cell class="text-right">{formatCurrency(row.total)}</Table.Cell>
+    {/snippet}
+  </SimpleTable>
 {:else}
-  <p class="text-muted-foreground">Vous n'avez pas encore effectué de transactions.</p>
+  <!-- TODO: Replace with <Alert></Alert> -->
+  <p class="rounded-lg bg-card py-4 text-center text-muted-foreground">
+    Vous n'avez aucune transactions pour l'instant.
+  </p>
 {/if}

@@ -3,7 +3,7 @@
   import { Button } from '$lib/components/ui/button';
   import Trash from 'lucide-svelte/icons/trash';
   import { Separator } from '$lib/components/ui/separator';
-  import { formatDatePPP, formatTimeBetween } from '$lib/utils/format';
+  import { formatDateFrench, formatTimeBetween } from '$lib/utils/format';
   import Badge from '../../ui/badges/badge.svelte';
   import DeleteSessionForm from '../../forms/sessions/delete-session-form.svelte';
   import type { Infer, SuperValidated } from 'sveltekit-superforms';
@@ -50,7 +50,7 @@
         {#if session.publicId === currentSessionPublicId}
           <Badge variant="success">Session actuelle</Badge>
         {/if}
-        <Badge>Créée le {formatDatePPP(session.createdAt)}</Badge>
+        <Badge>Créée le {formatDateFrench(session.createdAt)}</Badge>
         <Badge>Expire dans {formatTimeBetween(session.expiresAt)}</Badge>
         <Badge>
           Dernière utilisation il y a {formatTimeBetween(session.lastUsed)}

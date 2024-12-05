@@ -10,8 +10,8 @@
     dataset: TItem[];
     headRow: Snippet;
     headRowChild?: Snippet;
-    dataRow: Snippet<[{ row: TItem }]>;
-    dataRowChild?: Snippet<[{ row: TItem }]>;
+    dataRow: Snippet<[{ row: TItem; index: number }]>;
+    dataRowChild?: Snippet<[{ row: TItem; index: number }]>;
     finalRow?: Snippet;
     finalRowChild?: Snippet;
   };
@@ -25,8 +25,8 @@
     {@render headRowRenderer()}
   </Table.Header>
   <Table.Body>
-    {#each dataset as row}
-      {@render dataRowRenderer({ row })}
+    {#each dataset as row, index}
+      {@render dataRowRenderer({ row, index })}
     {/each}
     {@render finalRowRenderer()}
   </Table.Body>
@@ -42,12 +42,12 @@
   {/if}
 {/snippet}
 
-{#snippet dataRowRenderer({ row }: { row: TItem })}
+{#snippet dataRowRenderer({ row, index }: { row: TItem; index: number })}
   {#if dataRowChild}
-    {@render dataRowChild({ row })}
+    {@render dataRowChild({ row, index })}
   {:else if dataRow}
     <Table.Row>
-      {@render dataRow({ row })}
+      {@render dataRow({ row, index })}
     </Table.Row>
   {/if}
 {/snippet}
