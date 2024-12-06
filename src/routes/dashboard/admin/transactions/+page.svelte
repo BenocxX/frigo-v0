@@ -24,6 +24,6 @@
   </SimpleTable>
 {:else}
   <p class="rounded-lg bg-card py-4 text-center text-muted-foreground">
-    Aucun utilisateur n'a de dettes non remboursées.
+    Aucun utilisateur n'a de dettes non remboursées
   </p>
 {/if}
