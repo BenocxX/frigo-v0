@@ -8,9 +8,9 @@
 
   type Props = {
     dataset: TItem[];
-    headRow: Snippet;
+    headRow?: Snippet;
     headRowChild?: Snippet;
-    dataRow: Snippet<[{ row: TItem; index: number }]>;
+    dataRow?: Snippet<[{ row: TItem; index: number }]>;
     dataRowChild?: Snippet<[{ row: TItem; index: number }]>;
     finalRow?: Snippet;
     finalRowChild?: Snippet;
