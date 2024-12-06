@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const transactionProduct = z.object({
+const transactionProduct = z.object({
   productId: z.coerce.number(),
   quantity: z.coerce.number(),
 });

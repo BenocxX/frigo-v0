@@ -15,6 +15,7 @@
       <Table.Head class="w-[175px] min-w-[175px]">Date</Table.Head>
       <Table.Head>Produits</Table.Head>
       <Table.Head class="text-right">Total</Table.Head>
+      <Table.Head class="w-[200px] text-right">Dette payée</Table.Head>
     {/snippet}
     {#snippet dataRow({ row })}
       <Table.Cell>
@@ -28,10 +29,10 @@
         {/each}
       </Table.Cell>
       <Table.Cell class="text-right">{formatCurrency(row.total)}</Table.Cell>
+      <Table.Cell class="text-right">{row.payed ? 'Oui' : 'Non'}</Table.Cell>
     {/snippet}
   </SimpleTable>
 {:else}
-  <!-- TODO: Replace with <Alert></Alert> -->
   <p class="rounded-lg bg-card py-4 text-center text-muted-foreground">
     Vous n'avez aucune transactions pour l'instant.
   </p>

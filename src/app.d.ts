@@ -9,6 +9,7 @@ declare global {
 
     interface PageData {
       user: App.Locals['user'];
+      totalDebt: number | null;
     }
 
     type PasskeyLoginData = {

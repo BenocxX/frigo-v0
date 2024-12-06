@@ -82,6 +82,7 @@ model Transaction {
   userId    String
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   total     Float
+  payed     Boolean  @default(false)
 
   transactionProducts TransactionProduct[]
   User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -8,6 +8,7 @@ export const load = async ({ locals }) => {
       id: true,
       createdAt: true,
       total: true,
+      payed: true,
       transactionProducts: {
         select: {
           quantity: true,
