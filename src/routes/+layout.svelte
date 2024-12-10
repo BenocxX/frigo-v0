@@ -8,7 +8,7 @@
   let { children } = $props();
 </script>
 
-<Toaster position="top-right" richColors />
+<Toaster richColors />
 <ModeWatcher />
 <div class="flex h-screen flex-col">
   <Header />

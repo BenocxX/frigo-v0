@@ -11,9 +11,6 @@
   import Footer from './footer.svelte';
   import Separator from '$lib/components/ui/separator/separator.svelte';
   import { formatCurrency } from '$lib/utils/format';
-  import AlertDialogConfirm from '../ui/dialogs/alert-dialog-confirm.svelte';
-  import { toast } from 'svelte-sonner';
-  import { invalidateAll } from '$app/navigation';
 
   const user = $derived($page.data.user);
   const isAdmin = $derived(user?.role === 'admin');
@@ -33,20 +30,6 @@
 
   function isCurrentRoute(path: string) {
     return $page.url.pathname === path;
-  }
-
-  async function payDebt() {
-    const promise = fetch('/api/dashboard/debt/pay', { method: 'POST' });
-    toast.promise(promise, {
-      loading: 'Paiement de la dette en cours...',
-      success: 'Dette payée avec succès !',
-      error: 'Erreur lors du paiement de la dette',
-    });
-
-    const res = await promise;
-    if (res.ok) {
-      invalidateAll();
-    }
   }
 </script>
 
@@ -111,25 +94,8 @@
       <div
         class="absolute inset-y-0 right-0 flex items-center gap-2 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
       >
-        {#if totalDebt}
-          {@const formattedDebt = formatCurrency(totalDebt)}
-          <AlertDialogConfirm>
-            {#snippet trigger({ props })}
-              <Button {...props}>
-                Payer ma dette de {formattedDebt}
-              </Button>
-            {/snippet}
-            {#snippet title()}
-              Êtes-vous certains d'avoir payé votre dette de {formattedDebt} ?
-            {/snippet}
-            {#snippet description()}
-              Avant de confirmer, assurez-vous d'avoir bien payé votre dette de
-              <span class="text-foreground">{formattedDebt}</span> aux gestionnaires du frigo.
-            {/snippet}
-            {#snippet action({ props })}
-              <Button {...props} onclick={payDebt}>Je confirme avoir payé les gestionnaires</Button>
-            {/snippet}
-          </AlertDialogConfirm>
+        {#if totalDebt && $page.url.pathname !== '/dashboard/pay'}
+          <Button href="/dashboard/pay">Payer ma dette de {formatCurrency(totalDebt)}</Button>
           <Separator orientation="vertical" class="min-h-[60%]" />
         {/if}
         <ThemeToggle />
