@@ -24,7 +24,7 @@
     },
   });
 
-  const { enhance } = form;
+  const { enhance, delayed } = form;
 </script>
 
 <form method="POST" action="?/updateNames" class={className} use:enhance>
@@ -57,5 +57,5 @@
       <Form.FieldErrors />
     </Form.Field>
   </div>
-  <Form.Button>Soumettre</Form.Button>
+  <Form.Button {delayed} class="ml-auto w-full sm:w-max">Soumettre</Form.Button>
 </form>

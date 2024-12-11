@@ -60,5 +60,5 @@
     </Form.Control>
     <Form.FieldErrors />
   </Form.Field>
-  <Form.Button class="ml-auto mt-2 w-max">Mettre à jour</Form.Button>
+  <Form.Button class="ml-auto mt-2 w-full sm:w-max">Mettre à jour</Form.Button>
 </form>
