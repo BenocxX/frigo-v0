@@ -35,7 +35,11 @@ export class AuthService {
 
   /** Tries to log in the user with the given email and password. */
   public async login({ username, password }: AuthData) {
-    const user = await db.user.findFirst({ where: { username } });
+    const user = await db.user.findFirst({
+      where: { username },
+      omit: { passwordHash: false },
+    });
+
     if (!user) {
       return;
     }

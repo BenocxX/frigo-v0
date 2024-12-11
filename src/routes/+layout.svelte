@@ -4,6 +4,7 @@
   import Header from '$lib/components/custom/structure/header.svelte';
   import { ModeWatcher } from 'mode-watcher';
   import { Toaster } from '$lib/components/ui/sonner';
+  import Alert from '$lib/components/custom/ui/alerts/alert.svelte';
 
   let { children } = $props();
 </script>
@@ -12,6 +13,18 @@
 <ModeWatcher />
 <div class="flex h-screen flex-col">
   <Header />
+  <Alert class="rounded-none" variant="warning">
+    {#snippet title()}
+      Attention! Prénom et nom requis.
+    {/snippet}
+    {#snippet description()}
+      Pour faciliter la gestion des paiements, nous avons besoin de votre prénom et nom. Veuillez
+      mettre à jour votre profile dans les paramètres.
+    {/snippet}
+    {#snippet actions({ classes })}
+      <a href="/dashboard/settings" class={classes}>Paramètres</a>
+    {/snippet}
+  </Alert>
   <main class="container mx-auto flex-1 py-8">
     {@render children()}
   </main>

@@ -3,7 +3,7 @@
  */
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
-import type { Session } from '@prisma/client';
+import type { Session, User } from '@prisma/client';
 import { db } from '../prisma';
 import type { RequestEvent } from '@sveltejs/kit';
 import { TimeConstants } from '$lib/utils/time-constants';
@@ -55,13 +55,7 @@ export class SessionService {
     const sessionResult = await db.session.findFirst({
       where: { id: sessionId },
       include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            role: true,
-          },
-        },
+        user: true,
       },
     });
 
@@ -119,12 +113,5 @@ export class SessionService {
 }
 
 export type SessionValidationResult =
-  | {
-      session: Session;
-      user: {
-        id: string;
-        username: string;
-        role: string;
-      };
-    }
+  | { session: Session; user: Omit<User, 'passwordHash'> }
   | { session: null; user: null };
