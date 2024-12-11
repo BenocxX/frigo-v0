@@ -6,17 +6,16 @@ import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
 import type { Session } from '@prisma/client';
 import { db } from '../prisma';
 import type { RequestEvent } from '@sveltejs/kit';
+import { TimeConstants } from '$lib/utils/time-constants';
 
 export class SessionService {
   public static SESSION_COOKIE_NAME = 'auth-session';
 
-  public static DAY_IN_MS = 1000 * 60 * 60 * 24;
-
   /** The session token is valid for 15 days */
-  public static REFRESH_DELAY = SessionService.DAY_IN_MS * 15;
+  public static REFRESH_DELAY = TimeConstants.FIFTEEN_DAYS_IN_MS;
 
   /** The session token is valid for 30 days */
-  public static EXPIRY_DELAY = SessionService.DAY_IN_MS * 30;
+  public static EXPIRY_DELAY = TimeConstants.MONTH_IN_MS;
 
   /** Generates a random session token. */
   public generateToken(): string {

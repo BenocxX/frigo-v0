@@ -10,7 +10,7 @@ export const load = async ({ parent }) => {
   }
 
   const coinGeckoService = new CoinGeckoService();
-  const cryptoPrices = await coinGeckoService.btcAndEthPrices();
+  const { btcPrice, ethPrice } = await coinGeckoService.btcAndEthPrices();
 
   return {
     addresses: {
@@ -19,8 +19,8 @@ export const load = async ({ parent }) => {
       btc: env.BTC_ADDRESS,
       eth: env.ETH_ADDRESS,
     },
-    btcPrice: cryptoPrices.bitcoin.cad,
-    ethPrice: cryptoPrices.ethereum.cad,
+    btcPrice,
+    ethPrice,
   };
 };
 

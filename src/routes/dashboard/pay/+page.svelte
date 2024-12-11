@@ -11,8 +11,11 @@
   import QR from '@svelte-put/qr/svg/QR.svelte';
   import { browser } from '$app/environment';
   import { makeSearchParams } from '$lib/utils/search-params';
+  import { formatCurrency } from '$lib/utils/format.js';
 
   const { data } = $props();
+
+  const formattedDebt = formatCurrency(data.totalDebt);
 
   const paymentMethods = [
     { name: 'interac', label: 'Virement Interac', imgSrc: InteracImg, imgAlt: 'Interac logo' },
@@ -42,15 +45,12 @@
 
   const debtInBtc = (data.totalDebt / data.btcPrice).toFixed(7);
   const debtInEth = (data.totalDebt / data.ethPrice).toFixed(18);
-  console.log(debtInBtc, debtInEth);
 
   const { searchParams: btcSearchParams } = makeSearchParams({ amount: debtInBtc });
   const { searchParams: ethSearchParams } = makeSearchParams({
     value: debtInEth,
     amount: debtInEth,
   });
-
-  console.log(btcSearchParams, ethSearchParams);
 
   let isOpen = $state(false);
 </script>
@@ -85,21 +85,29 @@
         <AlertDialog.Title>Payer votre dette aux gestionnaires</AlertDialog.Title>
         <AlertDialog.Description>
           {#if isSelected('interac')}
-            Pour payer votre dette par virement Interac, veuillez envoyer le montant de votre dette
-            au numéro de téléphone suivant : <strong class="text-foreground">
-              {data.addresses.interac}
+            Pour payer votre dette par virement Interac, veuillez envoyer <strong
+              class="text-foreground"
+            >
+              {formattedDebt}
             </strong>
+            au numéro de téléphone suivant :
+            <strong class="text-foreground">{data.addresses.interac}</strong>
           {:else if isSelected('shakepay')}
-            Pour payer votre dette avec Shakepay, veuillez envoyer le montant de votre dette à
-            l'utilisateur suivant : <strong class="text-foreground">
-              {data.addresses.shakepay}
+            Pour payer votre dette avec Shakepay, veuillez envoyer <strong class="text-foreground">
+              {formattedDebt}
             </strong>
+            à l'utilisateur suivant :
+            <strong class="text-foreground">{data.addresses.shakepay}</strong>
           {:else if isSelected('bitcoin')}
-            Pour payer votre dette en Bitcoin, veuillez envoyer le montant de votre dette à
-            l'adresse suivante :
+            Pour payer votre dette en Bitcoin, veuillez envoyer <strong class="text-foreground">
+              {debtInBtc} BTC
+            </strong>
+            (soit <strong class="text-foreground">{formattedDebt}</strong>) à l'adresse suivante :
           {:else if isSelected('ethereum')}
-            Pour payer votre dette en Ethereum, veuillez envoyer le montant de votre dette à
-            l'adresse suivante :
+            Pour payer votre dette en Ethereum, veuillez envoyer <strong class="text-foreground">
+              {debtInEth} ETH
+            </strong>
+            (soit <strong class="text-foreground">{formattedDebt}</strong>) l'adresse suivante :
           {/if}
         </AlertDialog.Description>
       </AlertDialog.Header>
