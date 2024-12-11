@@ -11,18 +11,13 @@
     PasskeyClientService,
     type PasskeyAuthGenerateActionResult,
   } from '$lib/client/service/PasskeyClientService';
-  import { makeFormResultToast } from '$lib/utils/toasts';
+  import { toast } from 'svelte-sonner';
 
   const { data }: { data: SuperValidated<Infer<PasskeyLoginSchema>> } = $props();
 
   const form = superForm(data, {
     validators: zodClient(passkeyLoginSchema),
     onResult: async ({ result }) => {
-      makeFormResultToast(result, {
-        success: 'Authentification complété avec succès.',
-        error: "Erreur lors de l'authentification.",
-      });
-
       if (result.type !== 'success') return;
 
       const { form, optionsJSON } = result.data as PasskeyAuthGenerateActionResult<typeof data>;
@@ -31,9 +26,13 @@
       await passkeyClientService.authenticate('/api/passkeys/verify', {
         form,
         optionsJSON,
-        onSuccess: () => goto('/dashboard'),
+        onSuccess: () => {
+          toast.success('Authentification complété avec succès.');
+          goto('/dashboard');
+        },
         onError: (error) => {
           console.log(error);
+          toast.error("Erreur lors de l'authentification.");
           setError(form, 'username', 'Une erreur est survenue');
         },
       });
