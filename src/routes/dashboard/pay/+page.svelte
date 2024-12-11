@@ -12,6 +12,7 @@
   import { browser } from '$app/environment';
   import { makeSearchParams } from '$lib/utils/search-params';
   import { formatCurrency } from '$lib/utils/format.js';
+  import { toast } from 'svelte-sonner';
 
   const { data } = $props();
 
@@ -80,54 +81,59 @@
     {/snippet}
   </AlertDialog.Trigger>
   <AlertDialog.Content>
-    <form method="POST" use:enhance>
-      <input type="hidden" name="paymentMethod" value={selected} />
-      <AlertDialog.Header>
-        <AlertDialog.Title>Payer votre dette aux gestionnaires</AlertDialog.Title>
-        <AlertDialog.Description>
-          {#if isSelected('interac')}
-            Pour payer votre dette par virement Interac, veuillez envoyer <strong
-              class="text-foreground"
-            >
-              {formattedDebt}
-            </strong>
-            au numéro de téléphone suivant :
-            <strong class="text-foreground">{data.addresses.interac}</strong>
-          {:else if isSelected('shakepay')}
-            Pour payer votre dette avec Shakepay, veuillez envoyer <strong class="text-foreground">
-              {formattedDebt}
-            </strong>
-            à l'utilisateur suivant :
-            <strong class="text-foreground">{data.addresses.shakepay}</strong>
-          {:else if isSelected('bitcoin')}
-            Pour payer votre dette en Bitcoin, veuillez envoyer <strong class="text-foreground">
-              {debtInBtc} BTC
-            </strong>
-            (soit <strong class="text-foreground">{formattedDebt}</strong>) à l'adresse suivante :
-          {:else if isSelected('ethereum')}
-            Pour payer votre dette en Ethereum, veuillez envoyer <strong class="text-foreground">
-              {debtInEth} ETH
-            </strong>
-            (soit <strong class="text-foreground">{formattedDebt}</strong>) l'adresse suivante :
-          {/if}
-        </AlertDialog.Description>
-      </AlertDialog.Header>
-      {#if isSelected('bitcoin')}
-        <div class="mt-4">
-          <QR data={`bitcoin:${data.addresses.btc}${btcSearchParams}`} />
-        </div>
-      {:else if isSelected('ethereum')}
-        <div class="mt-4">
-          <QR data={`ethereum:${data.addresses.eth}${ethSearchParams}`} />
-        </div>
-      {/if}
-      <AlertDialog.Footer class="mt-4">
-        <AlertDialog.Cancel type="button">Annuler</AlertDialog.Cancel>
-        <AlertDialog.Action onclick={() => (isOpen = false)}>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Payer votre dette aux gestionnaires</AlertDialog.Title>
+      <AlertDialog.Description>
+        {#if isSelected('interac')}
+          Pour payer votre dette par virement Interac, veuillez envoyer <strong
+            class="text-foreground"
+          >
+            {formattedDebt}
+          </strong>
+          au numéro de téléphone suivant :
+          <strong class="text-foreground">{data.addresses.interac}</strong>
+        {:else if isSelected('shakepay')}
+          Pour payer votre dette avec Shakepay, veuillez envoyer <strong class="text-foreground">
+            {formattedDebt}
+          </strong>
+          à l'utilisateur suivant :
+          <strong class="text-foreground">{data.addresses.shakepay}</strong>
+        {:else if isSelected('bitcoin')}
+          Pour payer votre dette en Bitcoin, veuillez envoyer <strong class="text-foreground">
+            {debtInBtc} BTC
+          </strong>
+          (soit <strong class="text-foreground">{formattedDebt}</strong>) à l'adresse suivante :
+        {:else if isSelected('ethereum')}
+          Pour payer votre dette en Ethereum, veuillez envoyer <strong class="text-foreground">
+            {debtInEth} ETH
+          </strong>
+          (soit <strong class="text-foreground">{formattedDebt}</strong>) l'adresse suivante :
+        {/if}
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    {#if isSelected('bitcoin')}
+      <div class="mt-4">
+        <QR data={`bitcoin:${data.addresses.btc}${btcSearchParams}`} />
+      </div>
+    {:else if isSelected('ethereum')}
+      <div class="mt-4">
+        <QR data={`ethereum:${data.addresses.eth}${ethSearchParams}`} />
+      </div>
+    {/if}
+    <AlertDialog.Footer class="mt-4">
+      <AlertDialog.Cancel type="button">Annuler</AlertDialog.Cancel>
+      <form method="POST" use:enhance>
+        <input type="hidden" name="paymentMethod" value={selected} />
+        <AlertDialog.Action
+          onclick={() => {
+            isOpen = false;
+            toast.success('Votre dette a été payée avec succès.');
+          }}
+        >
           Je confirme avoir payer ma dette
         </AlertDialog.Action>
-      </AlertDialog.Footer>
-    </form>
+      </form>
+    </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>
 

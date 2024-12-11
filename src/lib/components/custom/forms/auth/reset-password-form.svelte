@@ -4,7 +4,7 @@
   import { Input } from '$lib/components/ui/input';
   import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
-  import { makeToastInstance } from '$lib/utils/toasts';
+  import { makeFormResultToast } from '$lib/utils/toasts';
   import { resetPasswordSchema, type ResetPasswordSchema } from './schema';
 
   type Props = {
@@ -14,21 +14,17 @@
 
   const { class: className, data }: Props = $props();
 
-  const toastInstance = makeToastInstance();
-
   const form = superForm(data, {
     validators: zodClient(resetPasswordSchema),
-    onSubmit: () => toastInstance.loading('Modification en cours...'),
     onResult: ({ result }) => {
-      if (toastInstance.isFailure(result)) {
-        toastInstance.error('Erreur lors de la modification.');
-      } else {
-        toastInstance.success('Mot de passe modifié avec succès.');
-      }
+      makeFormResultToast(result, {
+        success: 'Mot de passe modifié avec succès.',
+        error: 'Erreur lors de la modification.',
+      });
     },
   });
 
-  const { form: formData, enhance } = form;
+  const { form: formData, delayed, enhance } = form;
 </script>
 
 <form method="POST" action="?/resetPassword" class={className} use:enhance>
@@ -60,5 +56,5 @@
     </Form.Control>
     <Form.FieldErrors />
   </Form.Field>
-  <Form.Button class="ml-auto mt-2 w-full sm:w-max">Mettre à jour</Form.Button>
+  <Form.Button {delayed} class="ml-auto mt-2 w-full sm:w-max">Mettre à jour</Form.Button>
 </form>

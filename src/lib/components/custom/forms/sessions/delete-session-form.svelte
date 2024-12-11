@@ -2,10 +2,10 @@
   import * as Form from '$lib/components/ui/form/index.js';
   import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
   import { deleteSessionSchema, type DeleteSessionSchema } from './schema';
-  import { makeToastInstance } from '$lib/utils/toasts';
+  import { makeFormResultToast } from '$lib/utils/toasts';
   import { zodClient } from 'sveltekit-superforms/adapters';
   import { Input } from '$lib/components/ui/input';
-  import { Button, type ButtonProps } from '$lib/components/ui/button';
+  import { type ButtonProps } from '$lib/components/ui/button';
   import Trash from 'lucide-svelte/icons/trash';
   import type { PublicSessionDTO } from '$lib/utils/dto';
 
@@ -17,22 +17,18 @@
 
   const { session, data, buttonProps }: Props = $props();
 
-  const toastInstance = makeToastInstance();
-
   const form = superForm(data, {
     id: `delete-session-${session.publicId}`,
     validators: zodClient(deleteSessionSchema),
-    onSubmit: () => toastInstance.loading('Suppression en cours...'),
     onResult: ({ result }) => {
-      if (toastInstance.isFailure(result)) {
-        toastInstance.error('Erreur lors de la suppression.');
-      } else {
-        toastInstance.success('Session supprimée avec succès.');
-      }
+      makeFormResultToast(result, {
+        success: 'Session supprimée avec succès.',
+        error: 'Erreur lors de la suppression.',
+      });
     },
   });
 
-  const { form: formData, enhance } = form;
+  const { form: formData, delayed, enhance } = form;
 
   $formData.publicId = session.publicId;
 </script>
@@ -45,8 +41,8 @@
       {/snippet}
     </Form.Control>
   </Form.Field>
-  <Button {...buttonProps} type="submit" class="w-full" variant="destructive">
+  <Form.Button {...buttonProps} {delayed} class="w-full" variant="destructive">
     Supprimer la session
     <Trash />
-  </Button>
+  </Form.Button>
 </form>

@@ -5,7 +5,7 @@
   import { Input } from '$lib/components/ui/input';
   import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
-  import { makeToastInstance } from '$lib/utils/toasts';
+  import { makeFormResultToast } from '$lib/utils/toasts';
   import { renamePasskeySchema, type RenamePasskeySchema } from './schema';
 
   type Props = {
@@ -16,23 +16,22 @@
 
   const { passkey, data, onDoneEditing }: Props = $props();
 
-  const toastInstance = makeToastInstance();
-
   const form = superForm(data, {
     id: `rename-passkey-${passkey.id}`,
     validators: zodClient(renamePasskeySchema),
-    onSubmit: () => toastInstance.loading('Modification en cours...'),
     onResult: ({ result }) => {
-      if (toastInstance.isFailure(result)) {
-        toastInstance.error('Erreur lors de la modification.');
-      } else {
-        toastInstance.success('Passkey modifiée avec succès.');
+      makeFormResultToast(result, {
+        success: 'Passkey modifiée avec succès.',
+        error: 'Erreur lors de la modification.',
+      });
+
+      if (result.type === 'success') {
         onDoneEditing();
       }
     },
   });
 
-  const { form: formData, enhance } = form;
+  const { form: formData, delayed, enhance } = form;
 
   $formData.passkeyId = passkey.id;
   $formData.name = passkey.name;
@@ -55,5 +54,5 @@
     <Form.FieldErrors />
   </Form.Field>
   <Button type="button" variant="secondary" class="mr-2" onclick={onDoneEditing}>Annuler</Button>
-  <Button type="submit">Sauvegarder</Button>
+  <Form.Button {delayed}>Sauvegarder</Form.Button>
 </form>

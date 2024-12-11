@@ -4,17 +4,24 @@
   import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
   import { registerSchema, type RegisterSchema } from './schema';
+  import { makeFormResultToast } from '$lib/utils/toasts';
 
   export let data: SuperValidated<Infer<RegisterSchema>>;
 
   const form = superForm(data, {
     validators: zodClient(registerSchema),
+    onResult: ({ result }) => {
+      makeFormResultToast(result, {
+        success: 'Inscription complété avec succès.',
+        error: "Erreur lors de l'inscription.",
+      });
+    },
   });
 
-  const { form: formData } = form;
+  const { form: formData, delayed, enhance } = form;
 </script>
 
-<form method="POST">
+<form method="POST" use:enhance>
   <Form.Field {form} name="username">
     <Form.Control>
       {#snippet children({ props })}
@@ -43,7 +50,7 @@
     <Form.FieldErrors />
   </Form.Field>
   <div class="mt-4 flex flex-col gap-2">
-    <Form.Button>Inscription</Form.Button>
+    <Form.Button {delayed}>Inscription</Form.Button>
     <p class="my-4 text-center">
       Déjà un compte?
       <a href="/login" class="link">Connexion</a>

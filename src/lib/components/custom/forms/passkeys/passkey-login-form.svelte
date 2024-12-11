@@ -11,12 +11,18 @@
     PasskeyClientService,
     type PasskeyAuthGenerateActionResult,
   } from '$lib/client/service/PasskeyClientService';
+  import { makeFormResultToast } from '$lib/utils/toasts';
 
   const { data }: { data: SuperValidated<Infer<PasskeyLoginSchema>> } = $props();
 
   const form = superForm(data, {
     validators: zodClient(passkeyLoginSchema),
     onResult: async ({ result }) => {
+      makeFormResultToast(result, {
+        success: 'Authentification complété avec succès.',
+        error: "Erreur lors de l'authentification.",
+      });
+
       if (result.type !== 'success') return;
 
       const { form, optionsJSON } = result.data as PasskeyAuthGenerateActionResult<typeof data>;
@@ -34,7 +40,7 @@
     },
   });
 
-  const { form: formData, enhance } = form;
+  const { form: formData, delayed, enhance } = form;
 
   const { searchParams } = $derived(makeSearchParams($formData, ['username']));
 </script>
@@ -50,7 +56,7 @@
     <Form.FieldErrors />
   </Form.Field>
   <div class="mt-4 flex flex-col gap-2">
-    <Form.Button>Connexion</Form.Button>
+    <Form.Button {delayed}>Connexion</Form.Button>
     <a href={`/login${searchParams}`} class={buttonVariants({ variant: 'outline' })}>
       Utiliser un mot de passe
     </a>

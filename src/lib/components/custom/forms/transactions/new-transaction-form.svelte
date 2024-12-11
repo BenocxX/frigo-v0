@@ -1,11 +1,10 @@
 <script lang="ts">
   import * as Form from '$lib/components/ui/form/index.js';
-  import { makeToastInstance } from '$lib/utils/toasts';
+  import { makeFormResultToast } from '$lib/utils/toasts';
   import type { Product } from '@prisma/client';
   import { newTransactionSchema, type NewTransactionSchema } from './schema';
-  import SuperDebug, { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+  import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
-  import { browser } from '$app/environment';
   import Button from '$lib/components/ui/button/button.svelte';
 
   type Props = {
@@ -15,22 +14,18 @@
 
   const { products, data }: Props = $props();
 
-  const toastInstance = makeToastInstance();
-
   const form = superForm(data, {
     dataType: 'json',
     validators: zodClient(newTransactionSchema),
-    onSubmit: () => toastInstance.loading('Achat en cours...'),
     onResult: ({ result }) => {
-      if (toastInstance.isFailure(result)) {
-        toastInstance.error("Erreur lors de l'achat.");
-      } else {
-        toastInstance.success('Achat complété avec succès.');
-      }
+      makeFormResultToast(result, {
+        success: 'Achat complété avec succès.',
+        error: "Erreur lors de l'achat.",
+      });
     },
   });
 
-  const { form: formData, enhance } = form;
+  const { form: formData, delayed, enhance } = form;
 
   function addProduct(id: number) {
     const tp = $formData.transactionProducts.find((tp) => tp.productId === id);
@@ -85,8 +80,5 @@
       <Form.FieldErrors />
     </div>
   </Form.Fieldset>
-  <Form.Button>Acheter</Form.Button>
-  {#if browser}
-    <SuperDebug data={$formData} />
-  {/if}
+  <Form.Button {delayed}>Acheter</Form.Button>
 </form>

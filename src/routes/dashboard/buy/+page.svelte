@@ -29,7 +29,7 @@
     },
   });
 
-  const { form: formData, enhance } = form;
+  const { form: formData, delayed, enhance } = form;
 
   function addProduct(id: number) {
     const tp = $formData.transactionProducts.find((tp) => tp.productId === id);
@@ -127,7 +127,7 @@
             <Table.Cell class="text-right"></Table.Cell>
             <Table.Cell class="text-right">{formatCurrency(calculateTotal())}</Table.Cell>
             <Table.Cell>
-              <Form.Button class="w-full">Acheter</Form.Button>
+              <Form.Button {delayed} class="w-full">Acheter</Form.Button>
             </Table.Cell>
           </Table.Row>
         {/snippet}

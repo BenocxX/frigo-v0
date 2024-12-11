@@ -24,7 +24,7 @@
     },
   });
 
-  const { enhance, delayed } = form;
+  const { delayed, enhance } = form;
 </script>
 
 <form method="POST" action="?/updateNames" class={className} use:enhance>
