@@ -40,12 +40,17 @@
     localStorage.setItem('selectedPaymentMethod', method);
   }
 
-  // TODO: Replace with BTC/ETH amount needed to be paid based on the debt
-  const { searchParams: btcSearchParams } = makeSearchParams({ amount: 0 }, ['amount']);
-  const { searchParams: ethSearchParams } = makeSearchParams({ value: 0, amount: 0 }, [
-    'value',
-    'amount',
-  ]);
+  const debtInBtc = (data.totalDebt / data.btcPrice).toFixed(7);
+  const debtInEth = (data.totalDebt / data.ethPrice).toFixed(18);
+  console.log(debtInBtc, debtInEth);
+
+  const { searchParams: btcSearchParams } = makeSearchParams({ amount: debtInBtc });
+  const { searchParams: ethSearchParams } = makeSearchParams({
+    value: debtInEth,
+    amount: debtInEth,
+  });
+
+  console.log(btcSearchParams, ethSearchParams);
 
   let isOpen = $state(false);
 </script>

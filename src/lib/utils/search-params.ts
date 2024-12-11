@@ -1,8 +1,12 @@
 export function makeSearchParams<TData extends Record<string, unknown>>(
   data: TData,
-  keys: (keyof TData)[]
+  keys?: (keyof TData)[]
 ) {
   const urlSearchParams = new URLSearchParams();
+
+  if (!keys) {
+    keys = Object.keys(data) as (keyof TData)[];
+  }
 
   for (const key of keys) {
     if (data[key]) {
