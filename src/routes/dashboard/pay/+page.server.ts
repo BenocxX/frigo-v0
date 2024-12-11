@@ -2,7 +2,9 @@ import { db } from '$lib/server/prisma';
 import { redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { CoinGeckoService } from '$lib/server/services/coingecko-service.js';
-import { z } from 'zod';
+import { fail, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { paySchema } from '$lib/components/custom/forms/pay/schema.js';
 
 export const load = async ({ parent }) => {
   const data = await parent();
@@ -14,6 +16,7 @@ export const load = async ({ parent }) => {
   const { btcPrice, ethPrice } = await coinGeckoService.btcAndEthPrices();
 
   return {
+    payForm: await superValidate(zod(paySchema)),
     addresses: {
       interac: env.INTERAC_ADDRESS,
       shakepay: env.SHAKEPAY_ADDRESS,
@@ -26,19 +29,16 @@ export const load = async ({ parent }) => {
 };
 
 export const actions = {
-  default: async ({ request, locals }) => {
-    const formData = await request.formData();
-    const result = z
-      .enum(['interac', 'shakepay', 'bitcoin', 'ethereum'])
-      .safeParse(formData.get('paymentMethod'));
+  default: async (event) => {
+    const form = await superValidate(event, zod(paySchema));
 
-    if (!result.success) {
-      return { status: 400, body: { error: 'Missing payment method' } };
+    if (!form.valid) {
+      return fail(400, { form });
     }
 
     const transactions = await db.transaction.findMany({
       where: {
-        userId: locals.user!.id,
+        userId: event.locals.user!.id,
         payed: false,
       },
       select: {
@@ -54,9 +54,9 @@ export const actions = {
 
     await db.receipt.create({
       data: {
-        userId: locals.user!.id,
+        userId: event.locals.user!.id,
         total: transactions.reduce((acc, t) => acc + t.total, 0),
-        paymentMethod: result.data,
+        paymentMethod: form.data.paymentMethod,
         transactions: { connect: transactions },
       },
     });

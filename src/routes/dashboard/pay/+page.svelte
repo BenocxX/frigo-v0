@@ -1,7 +1,6 @@
 <script lang="ts">
   import PageTitle from '$lib/components/custom/structure/page-title.svelte';
   import { Button } from '$lib/components/ui/button';
-  import { enhance } from '$app/forms';
   import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
   import { cn } from '$lib/utils';
   import InteracImg from '$lib/assets/images/interac.png';
@@ -12,9 +11,26 @@
   import { browser } from '$app/environment';
   import { makeSearchParams } from '$lib/utils/search-params';
   import { formatCurrency } from '$lib/utils/format.js';
-  import { toast } from 'svelte-sonner';
+  import * as Form from '$lib/components/ui/form/index.js';
+  import { superForm } from 'sveltekit-superforms';
+  import { makeFormResultToast } from '$lib/utils/toasts';
+  import { zodClient } from 'sveltekit-superforms/adapters';
+  import { Input } from '$lib/components/ui/input';
+  import { paySchema } from '$lib/components/custom/forms/pay/schema.js';
 
   const { data } = $props();
+
+  const form = superForm(data.payForm, {
+    validators: zodClient(paySchema),
+    onResult: ({ result }) => {
+      makeFormResultToast(result, {
+        success: 'Paiement effectué avec succès.',
+        error: 'Erreur lors du paiement.',
+      });
+    },
+  });
+
+  const { delayed, enhance } = form;
 
   const formattedDebt = formatCurrency(data.totalDebt);
 
@@ -123,14 +139,17 @@
     <AlertDialog.Footer class="mt-4">
       <AlertDialog.Cancel type="button">Annuler</AlertDialog.Cancel>
       <form method="POST" use:enhance>
-        <input type="hidden" name="paymentMethod" value={selected} />
-        <AlertDialog.Action
-          onclick={() => {
-            isOpen = false;
-            toast.success('Votre dette a été payée avec succès.');
-          }}
-        >
-          Je confirme avoir payer ma dette
+        <Form.Field {form} name="paymentMethod">
+          <Form.Control>
+            {#snippet children({ props })}
+              <Input type="hidden" {...props} bind:value={selected} />
+            {/snippet}
+          </Form.Control>
+        </Form.Field>
+        <AlertDialog.Action>
+          {#snippet child({ props })}
+            <Form.Button {...props} {delayed}>Je confirme avoir payé ma dette</Form.Button>
+          {/snippet}
         </AlertDialog.Action>
       </form>
     </AlertDialog.Footer>
