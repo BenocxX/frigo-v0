@@ -23,6 +23,7 @@ model User {
   Passkey                  Passkey[]
   PasskeyCredentialOptions PasskeyCredentialOptions?
   Transaction              Transaction[]
+  Receipt                  Receipt[]
 }
 
 model Session {
@@ -80,12 +81,25 @@ model Product {
 model Transaction {
   id        Int      @id @default(autoincrement())
   userId    String
+  receiptId Int?
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   total     Float
   payed     Boolean  @default(false)
 
   transactionProducts TransactionProduct[]
   User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Receipt             Receipt?             @relation(fields: [receiptId], references: [id])
+}
+
+model Receipt {
+  id            Int      @id @default(autoincrement())
+  userId        String
+  createdAt     DateTime @default(now()) @db.Timestamptz(3)
+  total         Float
+  paymentMethod String
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
 }
 
 model TransactionProduct {

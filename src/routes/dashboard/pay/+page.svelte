@@ -81,6 +81,7 @@
   </AlertDialog.Trigger>
   <AlertDialog.Content>
     <form method="POST" use:enhance>
+      <input type="hidden" name="paymentMethod" value={selected} />
       <AlertDialog.Header>
         <AlertDialog.Title>Payer votre dette aux gestionnaires</AlertDialog.Title>
         <AlertDialog.Description>
