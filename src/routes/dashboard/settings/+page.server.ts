@@ -9,6 +9,7 @@ import {
 import { resetPasswordSchema } from '$lib/components/custom/forms/auth/schema';
 import { deleteSessionSchema } from '$lib/components/custom/forms/sessions/schema.js';
 import { PasskeyService } from '$lib/server/services/passkey-service';
+import { updateNamesSchema } from '$lib/components/custom/forms/user/schema.js';
 
 export const load = async (event) => {
   const { locals } = event;
@@ -34,6 +35,7 @@ export const load = async (event) => {
   const passkeyRegistrationOptions = await passkeyService.generateRegistrationOptions(locals.user!);
 
   return {
+    updateNamesForm: await superValidate(zod(updateNamesSchema)),
     deletePasskeyForm: await superValidate(zod(deletePasskeySchema)),
     renamePasskeyForm: await superValidate(zod(renamePasskeySchema)),
     resetPasswordForm: await superValidate(zod(resetPasswordSchema)),
@@ -46,6 +48,24 @@ export const load = async (event) => {
 };
 
 export const actions = {
+  updateNames: async (event) => {
+    const form = await superValidate(event, zod(updateNamesSchema));
+
+    if (!form.valid) {
+      return fail(400, { form });
+    }
+
+    await db.user.update({
+      where: { id: event.locals.user!.id },
+      data: {
+        username: form.data.username,
+        firstname: form.data.firstname,
+        lastname: form.data.lastname,
+      },
+    });
+
+    return { form };
+  },
   renamePasskey: async (event) => {
     const form = await superValidate(event, zod(renamePasskeySchema));
 

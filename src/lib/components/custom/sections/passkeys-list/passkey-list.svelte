@@ -48,7 +48,7 @@
   }
 </script>
 
-<div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b pb-12 md:grid-cols-3">
+<div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b py-12 md:grid-cols-3">
   <div>
     <h2 class="font-semibold">Passkeys</h2>
     <p class="mt-1 text-sm/6 text-muted-foreground">
