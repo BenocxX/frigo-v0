@@ -15,6 +15,8 @@
   import { formatCurrency } from '$lib/utils/format.js';
   import SimpleTable from '$lib/components/custom/ui/tables/simple-table.svelte';
   import PageTitle from '$lib/components/custom/structure/page-title.svelte';
+  import Alert from '$lib/components/custom/ui/alerts/alert.svelte';
+  import { FREEZE_DEBT_AMOUNT } from '$lib/utils/constants.js';
 
   const { data } = $props();
 
@@ -82,59 +84,70 @@
   title="Acheter des produits"
   subtitle="Sélectionnez les produits que vous souhaitez acheter"
 />
-<form method="POST" action="?/newTransaction" class="flex flex-col gap-6" use:enhance>
-  <Form.Fieldset {form} name="transactionProducts" class="space-y-0">
-    <ul role="list" class="mb-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {#each data.products as product}
-        {@render addProductButton(product)}
-      {/each}
-    </ul>
-    <Form.FieldErrors />
-  </Form.Fieldset>
-  {#if $formData.transactionProducts.length > 0}
-    <div transition:fade={{ duration: 250 }} class="flex flex-col gap-4">
-      <Separator />
-      <h3 class="text-xl">Produits dans le panier</h3>
-      <SimpleTable dataset={$formData.transactionProducts}>
-        {#snippet headRow()}
-          <Table.Head class="w-full whitespace-nowrap">Nom</Table.Head>
-          <Table.Head class="text-right">Quantité</Table.Head>
-          <Table.Head class="text-right">Prix</Table.Head>
-          <Table.Head class="text-right">Actions</Table.Head>
-        {/snippet}
-        {#snippet dataRow({ row })}
-          {@const product = data.products.find((p) => p.id === row.productId)!}
-          <Table.Cell class="font-medium">{product?.name}</Table.Cell>
-          <Table.Cell class="text-right">{row.quantity}</Table.Cell>
-          <Table.Cell class="text-right">
-            {formatCurrency(product.price * row.quantity)}
-          </Table.Cell>
-          <Table.Cell class="flex w-max items-center gap-2">
-            <Button size="icon" variant="secondary" onclick={() => addProduct(row.productId)}>
-              <Plus />
-            </Button>
-            <Button size="icon" variant="secondary" onclick={() => removeProduct(row.productId)}>
-              <Minus />
-            </Button>
-            <Button size="icon" variant="secondary" onclick={() => deleteProduct(row.productId)}>
-              <Trash />
-            </Button>
-          </Table.Cell>
-        {/snippet}
-        {#snippet finalRowChild()}
-          <Table.Row class="text-muted-foreground hover:bg-transparent dark:hover:bg-transparent">
-            <Table.Cell>Total</Table.Cell>
-            <Table.Cell class="text-right"></Table.Cell>
-            <Table.Cell class="text-right">{formatCurrency(calculateTotal())}</Table.Cell>
-            <Table.Cell>
-              <Form.Button {delayed} class="w-full">Acheter</Form.Button>
+{#if data.totalDebt < FREEZE_DEBT_AMOUNT}
+  <form method="POST" action="?/newTransaction" class="flex flex-col gap-6" use:enhance>
+    <Form.Fieldset {form} name="transactionProducts" class="space-y-0">
+      <ul role="list" class="mb-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {#each data.products as product}
+          {@render addProductButton(product)}
+        {/each}
+      </ul>
+      <Form.FieldErrors />
+    </Form.Fieldset>
+    {#if $formData.transactionProducts.length > 0}
+      <div transition:fade={{ duration: 250 }} class="flex flex-col gap-4">
+        <Separator />
+        <h3 class="text-xl">Produits dans le panier</h3>
+        <SimpleTable dataset={$formData.transactionProducts}>
+          {#snippet headRow()}
+            <Table.Head class="w-full whitespace-nowrap">Nom</Table.Head>
+            <Table.Head class="text-right">Quantité</Table.Head>
+            <Table.Head class="text-right">Prix</Table.Head>
+            <Table.Head class="text-right">Actions</Table.Head>
+          {/snippet}
+          {#snippet dataRow({ row })}
+            {@const product = data.products.find((p) => p.id === row.productId)!}
+            <Table.Cell class="font-medium">{product?.name}</Table.Cell>
+            <Table.Cell class="text-right">{row.quantity}</Table.Cell>
+            <Table.Cell class="text-right">
+              {formatCurrency(product.price * row.quantity)}
             </Table.Cell>
-          </Table.Row>
-        {/snippet}
-      </SimpleTable>
-    </div>
-  {/if}
-</form>
+            <Table.Cell class="flex w-max items-center gap-2">
+              <Button size="icon" variant="secondary" onclick={() => addProduct(row.productId)}>
+                <Plus />
+              </Button>
+              <Button size="icon" variant="secondary" onclick={() => removeProduct(row.productId)}>
+                <Minus />
+              </Button>
+              <Button size="icon" variant="secondary" onclick={() => deleteProduct(row.productId)}>
+                <Trash />
+              </Button>
+            </Table.Cell>
+          {/snippet}
+          {#snippet finalRowChild()}
+            <Table.Row class="text-muted-foreground hover:bg-transparent dark:hover:bg-transparent">
+              <Table.Cell>Total</Table.Cell>
+              <Table.Cell class="text-right"></Table.Cell>
+              <Table.Cell class="text-right">{formatCurrency(calculateTotal())}</Table.Cell>
+              <Table.Cell>
+                <Form.Button {delayed} class="w-full">Acheter</Form.Button>
+              </Table.Cell>
+            </Table.Row>
+          {/snippet}
+        </SimpleTable>
+      </div>
+    {/if}
+  </form>
+{:else}
+  <Alert variant="danger">
+    {#snippet title()}
+      Dette trop élevée
+    {/snippet}
+    {#snippet description()}
+      Ta dette excède 50$, tu ne peux plus acheter de produits tant qu'elle n'est pas payée.
+    {/snippet}
+  </Alert>
+{/if}
 
 {#snippet addProductButton(product: Product)}
   {@const quantity =
