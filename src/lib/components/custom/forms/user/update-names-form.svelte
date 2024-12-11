@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores';
   import * as Form from '$lib/components/ui/form/index.js';
   import { Input } from '$lib/components/ui/input';
   import { makeFormResultToast } from '$lib/utils/toasts';
@@ -16,7 +17,6 @@
   const form = superForm(data, {
     validators: zodClient(updateNamesSchema),
     onResult: ({ result }) => {
-      console.log(result);
       makeFormResultToast(result, {
         success: 'Modification complété avec succès.',
         error: 'Erreur lors de la modification.',
@@ -24,7 +24,7 @@
     },
   });
 
-  const { form: formData, enhance } = form;
+  const { enhance } = form;
 </script>
 
 <form method="POST" action="?/updateNames" class={className} use:enhance>
@@ -32,8 +32,8 @@
     <Form.Field {form} name="username" class="flex-1">
       <Form.Control>
         {#snippet children({ props })}
-          <Form.Label>Username</Form.Label>
-          <Input {...props} bind:value={$formData.username} />
+          <Form.Label>Nom d'utilisateur</Form.Label>
+          <Input {...props} bind:value={$page.data.user!.username} />
         {/snippet}
       </Form.Control>
       <Form.FieldErrors />
@@ -42,7 +42,7 @@
       <Form.Control>
         {#snippet children({ props })}
           <Form.Label>Prénom</Form.Label>
-          <Input {...props} bind:value={$formData.firstname} />
+          <Input {...props} bind:value={$page.data.user!.firstname} />
         {/snippet}
       </Form.Control>
       <Form.FieldErrors />
@@ -51,7 +51,7 @@
       <Form.Control>
         {#snippet children({ props })}
           <Form.Label>Nom</Form.Label>
-          <Input {...props} bind:value={$formData.lastname} />
+          <Input {...props} bind:value={$page.data.user!.lastname} />
         {/snippet}
       </Form.Control>
       <Form.FieldErrors />
