@@ -21,7 +21,8 @@
     { href: '/dashboard/buy', label: 'Acheter', isActive: user !== null },
     { href: '/dashboard/transactions', label: 'Mes transactions', isActive: user !== null },
     { href: '/dashboard/admin/products', label: 'Liste des produits', isActive: isAdmin },
-    { href: '/dashboard/admin/transactions', label: 'Liste des transactions', isActive: isAdmin },
+    { href: '/dashboard/admin/debts', label: 'Wall of shame', isActive: isAdmin },
+    { href: '/dashboard/admin/receipts', label: 'Wall of pride', isActive: isAdmin },
   ]);
 
   function getActiveLinks() {

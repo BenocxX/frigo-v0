@@ -7,18 +7,15 @@
   const { data } = $props();
 </script>
 
-<PageTitle
-  title="Liste des transactions"
-  subtitle="Liste des transactions effectuées par les membres"
-/>
+<PageTitle title="Wall of shame 👹" subtitle="Liste des dettes non-remboursées des utilisateurs" />
 {#if data.users.length > 0}
   <SimpleTable dataset={data.users}>
     {#snippet headRow()}
-      <Table.Head class="w-[175px] min-w-[175px]">Username</Table.Head>
+      <Table.Head class="min-w-[175px]">Utilisateur</Table.Head>
       <Table.Head class="text-right">Total</Table.Head>
     {/snippet}
     {#snippet dataRow({ row })}
-      <Table.Cell>{row.username}</Table.Cell>
+      <Table.Cell>{row.firstname} {row.lastname}</Table.Cell>
       <Table.Cell class="text-right">{formatCurrency(row.total)}</Table.Cell>
     {/snippet}
   </SimpleTable>

@@ -9,8 +9,7 @@ export const load = async () => {
         },
       },
     },
-    select: {
-      username: true,
+    include: {
       Transaction: {
         where: { payed: false },
         select: { total: true },
@@ -20,6 +19,8 @@ export const load = async () => {
 
   const usersWithTotal = users.map((user) => ({
     username: user.username,
+    firstname: user.firstname,
+    lastname: user.lastname,
     total: user.Transaction.reduce((acc, current) => acc + current.total, 0),
   }));
 
