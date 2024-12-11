@@ -2,7 +2,7 @@
   import { type VariantProps, tv } from 'tailwind-variants';
 
   export const badgeVariants = tv({
-    base: 'inline-flex items-center text-xs font-medium rounded-md ring-1 ring-inset',
+    base: 'inline-flex items-center rounded-md text-xs font-medium ring-1 ring-inset',
     variants: {
       variant: {
         default:
