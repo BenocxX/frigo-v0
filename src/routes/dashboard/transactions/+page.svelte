@@ -1,5 +1,6 @@
 <script lang="ts">
   import PageTitle from '$lib/components/custom/structure/page-title.svelte';
+  import Alert from '$lib/components/custom/ui/alerts/alert.svelte';
   import Badge from '$lib/components/custom/ui/badges/badge.svelte';
   import SimpleTable from '$lib/components/custom/ui/tables/simple-table.svelte';
   import * as Table from '$lib/components/ui/table';
@@ -33,7 +34,9 @@
     {/snippet}
   </SimpleTable>
 {:else}
-  <p class="rounded-lg bg-card py-4 text-center text-muted-foreground">
-    Vous n'avez aucune transactions pour l'instant.
-  </p>
+  <Alert variant="info">
+    {#snippet title()}
+      Vous n'avez aucune transactions pour l'instant.
+    {/snippet}
+  </Alert>
 {/if}

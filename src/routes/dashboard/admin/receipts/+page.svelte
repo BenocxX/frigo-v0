@@ -1,5 +1,6 @@
 <script lang="ts">
   import PageTitle from '$lib/components/custom/structure/page-title.svelte';
+  import Alert from '$lib/components/custom/ui/alerts/alert.svelte';
   import SimpleTable from '$lib/components/custom/ui/tables/simple-table.svelte';
   import * as Table from '$lib/components/ui/table';
   import { formatCurrency, formatDateFrench } from '$lib/utils/format';
@@ -31,7 +32,9 @@
     {/snippet}
   </SimpleTable>
 {:else}
-  <p class="rounded-lg bg-card py-4 text-center text-muted-foreground">
-    Aucun utilisateur n'a payé sa dette. 😢
-  </p>
+  <Alert variant="info">
+    {#snippet title()}
+      Aucun utilisateur n'a payé sa dette. 😢
+    {/snippet}
+  </Alert>
 {/if}
