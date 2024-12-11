@@ -14,7 +14,7 @@
 <ModeWatcher />
 <div class="flex h-screen flex-col">
   <Header />
-  {#if !$page.data.user?.firstname || !$page.data.user?.lastname}
+  {#if $page.data.user && $page.url.pathname !== '/dashboard/settings' && (!$page.data.user?.firstname || !$page.data.user?.lastname)}
     <Alert class="rounded-none" variant="warning">
       {#snippet title()}
         Attention! Prénom et nom requis.
